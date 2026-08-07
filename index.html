@@ -150,21 +150,95 @@
         <span id="toast-msg">Mesej pemberitahuan...</span>
     </div>
 
-    <!-- PRESET STAFF DATALIST FOR SSMP -->
-    <datalist id="staff-list">
-        <option value="Encik Ahmad Bin Ismail (Pengetua SSMP)"></option>
-        <option value="Puan Noraini Binti Zakaria (Pentadbir Sekolah)"></option>
-        <option value="Encik Khairul Anuar Bin Razak (Pentadbir Sekolah)"></option>
-        <option value="Encik Zulkifli Bin Md Amin (Pentadbir Sekolah)"></option>
-        <option value="Coach Azman Bin Kassim (Jurulatih Olahraga)"></option>
-        <option value="Coach Siti Sarah Binti Mansor (Jurulatih Renang)"></option>
-        <option value="Coach Hafiz Bin Ramli (Jurulatih Bola Sepak)"></option>
-        <option value="Coach Tan Eng Huat (Jurulatih Badminton)"></option>
-        <option value="Cikgu Mohd Faizal Bin Harun (Guru Akademik)"></option>
-        <option value="Cikgu Nurul Huda Binti Abdullah (Guru Akademik)"></option>
-        <option value="Cikgu Ramesh A/L Subramaniam (Guru Bertugas)"></option>
-        <option value="Cikgu Dayang Mastura Binti Abang (Guru Bertugas)"></option>
-    </datalist>
+    // Staff Data
+        const GURU_LIST = [
+            "ZAIDY BIN MOHD YUNUS",
+            "ROSHALIZA BINTI MOHAMED",
+            "RAFIDI BIN ABD. JABAR",
+            "MOHD SAIFUL BAKTIA BIN IBRAHIM",
+            "SITI SHAHIDA BINTI ABDULLAH",
+            "Dr. MAZMA SYAHIDATUL AYUNI BT MAZLAN",
+            "MOHD SYAFIQ LUQMAN BIN SHAMSUDDIN",
+            "MOHD AZWAN BIN MISLIM",
+            "MOHD NAWAWI BIN ZAKARIA",
+            "FONG YEN MIN",
+            "NAZRI BIN MOHAMED",
+            "MOHD SHAHRIL BIN ABDUL MALEK",
+            "NORAZURA AKMA BINTI SENIN",
+            "NURZILA BINTI ASUR",
+            "MOHAMAD SAIFUDDIN BIN SAID",
+            "NUR AFIQAH BINTI MOHD ASHRI",
+            "MOHAMAD HAZEEMAN BIN ZULLKIFLI",
+            "AHMAD BAIHAQI BIN MOHD ROZI",
+            "RABBIHAH BINTI YAKOB",
+            "SITI ESYAH BINTI BAHARI",
+            "NOORSHAFINAH BINTI AHMAD",
+            "SITI ZARLINA BINTI KARIM",
+            "RASIDAH BINTI ASRU @ ASRON",
+            "SAMINI A/P ANMPALAGAN",
+            "HADANIAH BINTI RAZALI",
+            "MUHAMMAD AIZUDDIN BIN ABDUL WAHAB",
+            "MUHAMAD SAFWAN BIN MAT SAKRI",
+            "NURUL HIDAYAH BINTI MUZAKARIA",
+            "ANWAR BIN ISMAIL",
+            "BETHURAJEVENV A/P PETHRAJOO",
+            "NOR AZLINDA BINTI ABDULLAH",
+            "NURULHANA BINTI ZAKARIA",
+            "SITI ROHAYA BINTI YAHYA",
+            "SITINURNABILAHUDA BINTI MOHD HAYAT",
+            "ZULHILMI QUSYAIRI BIN AZMAN",
+            "MUHAMAD NUR FIRDAUS BIN MOHD ASRI",
+            "MUHAMMAD AMIRUL SYAFIQ BIN ABDUL HAMID",
+            "NOOR ADILAH BINTI AZHAR",
+            "NOR ATIKA BINTI ABDUL MANAN",
+            "SITI MARYAM BINTI TAN",
+            "NORZULIANA BINTI ABD. HAMID",
+            "FATIN ILIA BINTI AHMAT",
+            "NIK MUHAMMAD AFIQ IQUAN BIN HASHIM",
+            "SYASYA IZZATEY BINTI ABD SAMAD",
+            "MUHAMMAD FIRDAUS BIN MOHAMA NIZAN",
+            "NUR ATHIRAH SYAMIMI BINTI BAHARUDDIN",
+            "NURUL HAFIZAH BINTI ABDUL AZIZ",
+            "ZULKIFLI BIN ALIAS",
+            "ZATIL FARYANI BINTI MUHAMMAD ZAID",
+            "FARHANA BINTI MOHAMAD RADZI",
+            "ADIRA FAZLIN BINTI MOHD ARIF",
+            "NOOR ALYA SYAHIRA BINTI ABDUL HALIM",
+            "AHMAD SHAZWAN NAJMI BIN MOHD ASRI",
+            "NURFATIN BINTI SUGIONO",
+            "MOHD KHAIRI BIN HAJI YACOB",
+            "MUHASHAHRUL SHAZMIE BIN MOHAMED",
+            "MUHAMMAD NOR FARIHIN BIN NOR HAKIMI"
+        ];
+
+        const JURULATIH_LIST = [
+            "SASITHARAN A/L MUNIANDI",
+            "KENNY THAM YEW CHING",
+            "NASIR BIN IDRIS",
+            "MOHD NASRUL HAKIM BIN HAJI MOHAMAD ZAHIR",
+            "MOHD FAUZI BIN SULAIMAN",
+            "NG SIANG FEY",
+            "MOHD ZERRY BIN NAZERI",
+            "ABDUL HAKIM BIN YUNUS",
+            "MUHAMAD ZAWAWI BIN MAJID",
+            "Dr. JENNE LEE LING HUEY",
+            "NURMAHLIANA ZAIRANI BT MUHAMAD ZAINI",
+            "MOHD FIRDAUS BIN ISA",
+            "TOO YING ING",
+            "MUHAMMAD DZAFRAN ASYRAAF BIN MUHAMAD ZAINUDIN",
+            "FAZLI HISHAM BIN FAUZI",
+            "MOHAMAD NAZEER BIN BIN MOHAMED NESHARAH",
+            "MUHAMMAD SYAFIQ FATHUDDIN BIN AMRAN",
+            "MUHAMAD AMIRUL NAIM BIN ABDUL GHANI",
+            "MOHD SHAIFULLIZAM BIN ABDULLAH",
+            "SITI AISYAH BINTI NORA RAHIS",
+            "NUR HARITHAH HAFIFAH BINTI HATIP",
+            "SITI NUR FARA'SHAFIRA BINTI SALSABRI",
+            "NUR SYAHIRA BINTI MOHD"
+        ];
+
+        const ALL_STAFF = [...GURU_LIST.map(n => ({ name: n, type: 'GURU' })), ...JURULATIH_LIST.map(n => ({ name: n, type: 'JURULATIH' }))];
+
 
     <main class="flex-grow max-w-7xl w-full mx-auto p-3 sm:p-5">
 
