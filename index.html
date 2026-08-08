@@ -3,1857 +3,1292 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Guru & Jurulatih Bertugas - SSMP 2026</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Cascadia Code Font CDN -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cascadia-code@5.0.1/index.css">
+    <title>e-Laporan Guru Bertugas SSMP 2026</title>
     
-    <!-- Firebase JS SDK (v9 Compat for Realtime Cloud Database) -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <!-- Tailwind CSS & FontAwesome Icons -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SignaturePad JS -->
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+
+    <!-- Cascadia Code Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cascadia+Code:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        body, input, select, textarea, button, table {
-            font-family: 'Cascadia Code', 'Cascadia Mono', Consolas, 'Courier New', monospace;
-            background-color: #fafafa;
-            color: #18181b;
+        * {
+            font-family: 'Cascadia Code', monospace, sans-serif;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 5px;
-            height: 5px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f4f4f5;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #a1a1aa;
-            border-radius: 2px;
+        body {
+            background-color: #f1f5f9;
+            color: #0f172a;
         }
 
-        /* Minimal Print Styles */
+        .bg-ssmp-primary { background-color: #1e3a8a; }
+        .bg-ssmp-secondary { background-color: #0284c7; }
+        .bg-ssmp-accent { background-color: #f59e0b; }
+        .border-ssmp-primary { border-color: #1e3a8a; }
+        .text-ssmp-primary { color: #1e3a8a; }
+
+        .form-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px -2px rgba(30, 58, 138, 0.08);
+            border: 1px solid #cbd5e1;
+        }
+
+        .section-banner {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            color: #ffffff;
+            padding: 10px 16px;
+            border-radius: 8px 8px 0 0;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        input, select, textarea {
+            background-color: #f8fafc !important;
+            border: 1px solid #94a3b8 !important;
+            transition: all 0.2s ease-in-out;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            background-color: #ffffff !important;
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2) !important;
+            outline: none;
+        }
+
+        /* Status Colors */
+        .badge-approved { background-color: #10b981; color: #ffffff; }
+        .badge-pending { background-color: #f59e0b; color: #ffffff; }
+        .badge-revision { background-color: #ef4444; color: #ffffff; }
+
         @media print {
-            @page {
-                size: A4 portrait;
-                margin: 8mm;
-            }
-            body {
-                background: white !important;
-                color: black !important;
-                font-size: 10pt;
-            }
-            .no-print {
-                display: none !important;
-            }
-            .print-only {
-                display: block !important;
-            }
-            .print-page-break {
-                page-break-before: always;
-            }
-            .report-card {
-                box-shadow: none !important;
-                border: none !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                width: 100% !important;
-            }
-            table {
-                border-collapse: collapse !important;
-                width: 100% !important;
-            }
-            th, td {
-                border: 1px solid #000 !important;
-                padding: 4px 6px !important;
-                color: #000 !important;
-            }
+            body { background: white !important; color: black !important; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            .print-container { width: 100% !important; margin: 0 !important; padding: 0 !important; }
+            .print-table { border-collapse: collapse !important; width: 100% !important; }
+            .print-table th, .print-table td { border: 1px solid #000 !important; padding: 6px 8px !important; font-size: 11pt !important; }
+            .page-break { page-break-before: always; }
         }
 
-        .sig-canvas {
-            border: 1px solid #d4d4d8;
-            border-radius: 0.25rem;
-            cursor: crosshair;
-            background-color: #ffffff;
-        }
+        .print-only { display: none; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased">
+<body class="min-h-screen flex flex-col">
 
-    <header class="bg-zinc-900 text-zinc-100 border-b border-zinc-800 sticky top-0 z-40 no-print">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-14">
-                <!-- Logo & Title -->
-                <div class="flex items-center space-x-3">
-                    <div class="bg-zinc-800 text-zinc-200 border border-zinc-700 p-1.5 rounded text-xs flex items-center justify-center font-bold">
-                        <i class="fa-solid fa-file-lines text-sm"></i>
-                    </div>
-                    <div>
-                        <h1 class="font-bold text-sm tracking-tight text-zinc-100">SSMP e-Laporan 2026</h1>
-                        <p class="text-[10px] text-zinc-400">Sekolah Sukan Malaysia Pahang</p>
-                    </div>
-                </div>
-
-                <!-- Navigation Tabs -->
-                <nav class="hidden md:flex space-x-1">
-                    <button onclick="switchTab('form')" id="tab-form" class="px-3 py-1.5 text-xs font-medium rounded transition bg-zinc-100 text-zinc-900 font-bold">
-                        [1] Borang Laporan
-                    </button>
-                    <button onclick="switchTab('preview')" id="tab-preview" class="px-3 py-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 rounded transition">
-                        [2] Pratonton & Cetak
-                    </button>
-                    <button onclick="switchTab('archive')" id="tab-archive" class="px-3 py-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 rounded transition">
-                        [3] Senarai Rekod
-                    </button>
-                    <button onclick="openAdminAuthModal()" id="tab-admin" class="px-3 py-1.5 text-xs font-medium text-amber-400 border border-amber-500/30 hover:bg-amber-500/10 rounded transition flex items-center">
-                        <i class="fa-solid fa-user-shield mr-1.5"></i> [4] Akses Pentadbir
-                    </button>
-                </nav>
-
-                <!-- Actions & Cloud Sync Indicator -->
-                <div class="flex items-center space-x-2">
-                    <div id="cloud-status-badge" onclick="openFirebaseConfigModal()" class="cursor-pointer bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 text-zinc-300 text-[10px] px-2 py-1 rounded flex items-center" title="Klik untuk tetapan pangkalan data">
-                        <span id="cloud-dot" class="w-2 h-2 rounded-full bg-amber-500 mr-1.5 animate-pulse"></span>
-                        <span id="cloud-status-text">Cloud Sync</span>
-                    </div>
-                    <button onclick="saveReportToStorage()" class="border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs px-3 py-1.5 rounded flex items-center transition">
-                        <i class="fa-solid fa-floppy-disk mr-1.5"></i> Simpan
-                    </button>
-                    <button onclick="resetCurrentForm()" class="border border-zinc-700 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs px-3 py-1.5 rounded flex items-center transition">
-                        <i class="fa-solid fa-rotate-left mr-1.5"></i> Semula
-                    </button>
+    <!-- Top Navigation Bar -->
+    <header class="no-print bg-slate-900 text-white shadow-lg sticky top-0 z-50 border-b-4 border-amber-500">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <svg class="w-10 h-10 text-amber-400" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="6"/>
+                    <path d="M30 70 L50 25 L70 70 Z" fill="#f59e0b"/>
+                </svg>
+                <div>
+                    <h1 class="text-lg font-bold tracking-wider text-amber-400">e-LAPORAN SSMP 2026</h1>
+                    <p class="text-xs text-slate-300">Sekolah Sukan Malaysia Pahang</p>
                 </div>
             </div>
-        </div>
 
-        <!-- Mobile Nav Bar -->
-        <div class="md:hidden flex border-t border-zinc-800 text-[11px] justify-around bg-zinc-900 p-1">
-            <button onclick="switchTab('form')" id="mob-tab-form" class="py-1 px-2 text-zinc-100 font-bold">
-                Borang
-            </button>
-            <button onclick="switchTab('preview')" id="mob-tab-preview" class="py-1 px-2 text-zinc-400">
-                Cetak
-            </button>
-            <button onclick="switchTab('archive')" id="mob-tab-archive" class="py-1 px-2 text-zinc-400">
-                Rekod
-            </button>
-            <button onclick="openAdminAuthModal()" id="mob-tab-admin" class="py-1 px-2 text-amber-400 font-bold">
-                Pentadbir
-            </button>
+            <!-- Global Status Indicator -->
+            <div class="flex items-center space-x-2 bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700 text-xs">
+                <span id="cloudStatusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span id="cloudStatusText" class="text-slate-200 font-medium">Mod Luar Talian (Lokal)</span>
+            </div>
+
+            <!-- Tab Buttons -->
+            <nav class="flex space-x-1">
+                <button onclick="switchTab('borang')" id="tabBtnBorang" class="px-4 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white shadow transition">
+                    <i class="fa-solid fa-pen-to-square mr-1.5"></i>Borang Laporan
+                </button>
+                <button onclick="switchTab('pratonton')" id="tabBtnPratonton" class="px-4 py-2 text-xs font-bold rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition">
+                    <i class="fa-solid fa-print mr-1.5"></i>Pratonton & Cetak
+                </button>
+                <button onclick="switchTab('rekod')" id="tabBtnRekod" class="px-4 py-2 text-xs font-bold rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition">
+                    <i class="fa-solid fa-folder-open mr-1.5"></i>Senarai Rekod
+                </button>
+                <button onclick="openAdminModal()" class="px-4 py-2 text-xs font-bold rounded-lg bg-amber-600 hover:bg-amber-500 text-white transition">
+                    <i class="fa-solid fa-user-shield mr-1.5"></i>Akses Pentadbir
+                </button>
+            </nav>
         </div>
     </header>
 
-    <!-- Notification Toast -->
-    <div id="toast" class="fixed bottom-4 right-4 z-50 transform translate-y-20 opacity-0 transition-all duration-200 bg-zinc-900 text-zinc-100 text-xs border border-zinc-700 px-4 py-2.5 rounded shadow-lg flex items-center max-w-sm pointer-events-none">
-        <i id="toast-icon" class="fa-solid fa-circle-info text-zinc-400 mr-2"></i>
-        <span id="toast-msg">Mesej pemberitahuan...</span>
-    </div>
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
 
-    <main class="flex-grow max-w-7xl w-full mx-auto p-3 sm:p-5">
-
-        <!-- ========================================== -->
-        <!-- TAB 1: FORM INPUT SECTION -->
-        <!-- ========================================== -->
-        <section id="view-form" class="space-y-4">
+        <!-- ================= BORANG TAB ================= -->
+        <div id="tabBorang" class="space-y-6">
             
-            <!-- Banner / Header Info -->
-            <div class="bg-white border border-zinc-200 rounded-lg p-4 shadow-sm">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                        <span class="text-[10px] text-zinc-500 font-bold uppercase tracking-wider block mb-1">
-                            SEKOLAH SUKAN MALAYSIA PAHANG • 2026
-                        </span>
-                        <h2 class="text-base sm:text-lg font-bold text-zinc-900 tracking-tight">LAPORAN GURU BERTUGAS HARIAN / MINGGUAN</h2>
-                        <p class="text-zinc-500 text-xs mt-0.5">Sistem rekod tugas harian dan penilaian fasiliti sekolah.</p>
-                    </div>
-
-                    <!-- Date & Period Selectors -->
-                    <div class="bg-zinc-50 p-3 rounded border border-zinc-200 grid grid-cols-1 sm:grid-cols-2 gap-2.5 min-w-[300px]">
-                        <div>
-                            <label class="block text-[11px] text-zinc-600 font-medium mb-0.5">Tempoh Mula (Isnin)</label>
-                            <input type="date" id="input-tempoh-mula" onchange="autoCalculateWeek()" class="w-full bg-white border border-zinc-300 rounded px-2 py-1 text-xs text-zinc-900 focus:outline-none focus:border-zinc-800">
+            <!-- Header Header SSMP -->
+            <div class="form-card p-6 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 text-white border-none relative overflow-hidden">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-20 h-20 bg-white p-1 rounded-full shadow-md flex items-center justify-center shrink-0">
+                            <!-- SSMP Crest SVG -->
+                            <svg viewBox="0 0 200 200" class="w-full h-full">
+                                <circle cx="100" cy="100" r="90" fill="#ffffff" stroke="#1e3a8a" stroke-width="8"/>
+                                <path d="M40 140 C70 40 130 40 160 140" fill="none" stroke="#000000" stroke-width="6"/>
+                                <path d="M160 140 C130 40 70 40 40 140" fill="none" stroke="#000000" stroke-width="6"/>
+                                <text x="100" y="105" font-family="sans-serif" font-weight="900" font-size="28" fill="#f59e0b" text-anchor="middle">SSMP</text>
+                                <text x="100" y="125" font-family="sans-serif" font-weight="bold" font-size="10" fill="#dc2626" text-anchor="middle">STRIVE FOR EXCELLENCE</text>
+                                <circle cx="70" cy="145" r="10" fill="none" stroke="#0284c7" stroke-width="3"/>
+                                <circle cx="85" cy="152" r="10" fill="none" stroke="#f59e0b" stroke-width="3"/>
+                                <circle cx="100" cy="145" r="10" fill="none" stroke="#000000" stroke-width="3"/>
+                                <circle cx="115" cy="152" r="10" fill="none" stroke="#10b981" stroke-width="3"/>
+                                <circle cx="130" cy="145" r="10" fill="none" stroke="#ef4444" stroke-width="3"/>
+                            </svg>
                         </div>
                         <div>
-                            <label class="block text-[11px] text-zinc-600 font-medium mb-0.5">Tempoh Tamat (Jumaat)</label>
-                            <input type="date" id="input-tempoh-tamat" class="w-full bg-white border border-zinc-300 rounded px-2 py-1 text-xs text-zinc-900 focus:outline-none focus:border-zinc-800">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] text-zinc-600 font-medium mb-0.5">Tarikh Laporan</label>
-                            <input type="date" id="input-tarikh" onchange="autoSetDayName()" class="w-full bg-white border border-zinc-300 rounded px-2 py-1 text-xs text-zinc-900 focus:outline-none focus:border-zinc-800">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] text-zinc-600 font-medium mb-0.5">Hari</label>
-                            <select id="input-hari" class="w-full bg-white border border-zinc-300 rounded px-2 py-1 text-xs text-zinc-900 focus:outline-none focus:border-zinc-800">
-                                <option value="ISNIN">ISNIN</option>
-                                <option value="SELASA">SELASA</option>
-                                <option value="RABU">RABU</option>
-                                <option value="KHAMIS">KHAMIS</option>
-                                <option value="JUMAAT">JUMAAT</option>
-                                <option value="SABTU">SABTU</option>
-                                <option value="AHAD">AHAD</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SECTION 1: GURU / JURULATIH BERTUGAS -->
-            <div class="bg-white border border-zinc-200 rounded-lg overflow-hidden shadow-sm">
-                <div class="bg-zinc-100 border-b border-zinc-200 px-4 py-2.5 flex items-center justify-between">
-                    <h3 class="font-bold text-xs uppercase tracking-wide text-zinc-800">
-                        1. GURU / JURULATIH BERTUGAS
-                    </h3>
-                    <button onclick="addDutyGuruRow()" class="text-xs border border-zinc-300 bg-white hover:bg-zinc-100 text-zinc-800 px-2.5 py-1 rounded transition flex items-center">
-                        <i class="fa-solid fa-plus mr-1"></i> Tambah Staf
-                    </button>
-                </div>
-                <div class="p-3 overflow-x-auto">
-                    <table class="w-full text-xs text-left border-collapse">
-                        <thead>
-                            <tr class="bg-zinc-50 border-b border-zinc-200 text-zinc-600 uppercase text-[10px]">
-                                <th class="p-2 w-10 text-center">BIL</th>
-                                <th class="p-2">NAMA GURU / JURULATIH BERTUGAS</th>
-                                <th class="p-2 w-44 text-center">TANDATANGAN</th>
-                                <th class="p-2 w-12 text-center">TINDAKAN</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbody-guru-bertugas" class="divide-y divide-zinc-200">
-                            <!-- JS auto fills rows -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- SECTION 2: KEBERADAAN GURU / JURULATIH (TIDAK HADIR) -->
-            <div class="bg-white border border-zinc-200 rounded-lg overflow-hidden shadow-sm">
-                <div class="bg-zinc-100 border-b border-zinc-200 px-4 py-2.5 flex items-center justify-between">
-                    <h3 class="font-bold text-xs uppercase tracking-wide text-zinc-800">
-                        2. KEBERADAAN GURU / JURULATIH (TIDAK HADIR)
-                    </h3>
-                    <button type="button" onclick="addAbsentGuruRow()" class="text-xs border border-zinc-300 bg-white hover:bg-zinc-100 text-zinc-800 px-2.5 py-1 rounded transition flex items-center">
-                        <i class="fa-solid fa-plus mr-1"></i> Tambah Staf
-                    </button>
-                </div>
-                <div class="p-3 overflow-x-auto">
-                    <table class="w-full text-xs text-left border-collapse">
-                        <thead>
-                            <tr class="bg-zinc-50 border-b border-zinc-200 text-zinc-600 uppercase text-[10px]">
-                                <th class="p-2 w-10 text-center">BIL</th>
-                                <th class="p-2">NAMA GURU / JURULATIH</th>
-                                <th class="p-2">CATATAN / SEBAB TIDAK HADIR</th>
-                                <th class="p-2 w-12 text-center">TINDAKAN</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbody-tidak-hadir" class="divide-y divide-zinc-200">
-                            <!-- JS auto fills rows -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- SECTION 3: CATATAN HARIAN & PENILAIAN -->
-            <div class="bg-white border border-zinc-200 rounded-lg overflow-hidden shadow-sm">
-                <div class="bg-zinc-100 border-b border-zinc-200 px-4 py-2.5 flex items-center justify-between">
-                    <h3 class="font-bold text-xs uppercase tracking-wide text-zinc-800">
-                        3. CATATAN HARIAN & PENILAIAN PREMIS
-                    </h3>
-                    <button onclick="addUcapanCard()" class="text-xs border border-zinc-300 bg-white hover:bg-zinc-100 text-zinc-800 px-2.5 py-1 rounded transition flex items-center">
-                        <i class="fa-solid fa-plus mr-1"></i> Tambah Ucapan / Taklimat
-                    </button>
-                </div>
-                
-                <div class="p-4 space-y-4">
-                    
-                    <!-- Perhimpunan / Ucapan / Taklimat / Pengumuman Dynamic Entries -->
-                    <div class="space-y-2">
-                        <div class="flex items-center justify-between">
-                            <label class="block text-xs font-bold text-zinc-700 uppercase tracking-wide">
-                                PERHIMPUNAN / UCAPAN / TAKLIMAT / PENGUMUMAN
-                            </label>
-                        </div>
-                        <div id="ucapan-container" class="space-y-2.5">
-                            <!-- Dynamic Ucapan Cards inserted by JS -->
+                            <h2 class="text-xl md:text-2xl font-bold tracking-wide text-amber-300">SEKOLAH SUKAN MALAYSIA PAHANG</h2>
+                            <p class="text-sm text-blue-100 font-semibold">LAPORAN GURU / JURULATIH BERTUGAS HARIAN & MINGGUAN TAHUN 2026</p>
+                            <p class="text-xs text-blue-200 mt-1"><i class="fa-solid fa-location-dot mr-1 text-amber-400"></i>Gambang, Kuantan, Pahang Darul Makmur</p>
                         </div>
                     </div>
 
-                    <!-- Evaluation Matrix Table -->
-                    <div>
-                        <label class="block text-xs font-bold text-zinc-700 uppercase tracking-wide mb-1">
-                            PENILAIAN KEBERSIHAN, KECERIAAN & KESELAMATAN
-                        </label>
-                        <div class="overflow-x-auto rounded border border-zinc-200">
-                            <table class="w-full text-xs text-left border-collapse">
-                                <thead>
-                                    <tr class="bg-zinc-100 border-b border-zinc-200 text-zinc-700 font-bold text-center">
-                                        <th class="p-2 text-left w-1/3">PREMIS / LOKASI</th>
-                                        <th class="p-2 w-1/5">KEBERSIHAN</th>
-                                        <th class="p-2 w-1/5">KECERIAAN</th>
-                                        <th class="p-2 w-1/5">KESELAMATAN</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-zinc-200 text-xs">
-                                    
-                                    <!-- Row 1: Kawasan Sekolah -->
-                                    <tr class="hover:bg-zinc-50">
-                                        <td class="p-2 font-medium text-zinc-800">1. KAWASAN SEKOLAH</td>
-                                        <td class="p-1 text-center"><select id="eval-kawasan-kebersihan" class="w-full bg-white border border-zinc-300 rounded p-1 text-xs focus:border-zinc-800"></select></td>
-                                        <td class="p-1 text-center"><select id="eval-kawasan-keceriaan" class="w-full bg-white border border-zinc-300 rounded p-1 text-xs focus:border-zinc-800"></select></td>
-                                        <td class="p-1 text-center"><select id="eval-kawasan-keselamatan" class="w-full bg-white border border-zinc-300 rounded p-1 text-xs focus:border-zinc-800"></select></td>
-                                    </tr>
-
-                                    <!-- Row 2: Bangunan / Kelas / Bengkel -->
-                                    <tr class="hover:bg-zinc-50">
-                                        <td class="p-2 font-medium text-zinc-800">2. BANGUNAN / KELAS / BENGKEL</td>
-                                        <td class="p-1 text-center"><select id="eval-bangunan-kebersihan" class="w-full bg-white border border-zinc-300 rounded p-1 text-xs focus:border-zinc-800"></select></td>
-                                        <td class="p-1 text-center"><select id="eval-bangunan-keceriaan" class="w-full bg-white border border-zinc-300 rounded p-1 text-xs focus:border-zinc-800"></select></td>
-                                        <td class="p-1 text-center"><select id="eval-bangunan-keselamatan" class="w-full bg-white border border-zinc-300 rounded p-1 text-xs focus:border-zinc-800"></select></td>
-                                    </tr>
-
-                                    <!-- Row 3: Tandas L dan P -->
-                                    <tr class="hover:bg-zinc-50">
-                                        <td class="p-2 font-medium text-zinc-800">3. TANDAS L DAN P</td>
-                                        <td class="p-1 text-center"><select id="eval-tandas-kebersihan" class="w-full bg-white border border-zinc-300 rounded p-1 text-xs focus:border-zinc-800"></select></td>
-                                        <td class="p-1 text-center"><select id="eval-tandas-keceriaan" class="w-full bg-white border border-zinc-300 rounded p-1 text-xs focus:border-zinc-800"></select></td>
-                                        <td class="p-1 text-center"><select id="eval-tandas-keselamatan" class="w-full bg-white border border-zinc-300 rounded p-1 text-xs focus:border-zinc-800"></select></td>
-                                    </tr>
-
-                                    <!-- Row 4: Kantin Sekolah -->
-                                    <tr class="hover:bg-zinc-50">
-                                        <td class="p-2 font-medium text-zinc-800">4. KANTIN SEKOLAH</td>
-                                        <td class="p-1 text-center"><select id="eval-kantin-kebersihan" class="w-full bg-white border border-zinc-300 rounded p-1 text-xs focus:border-zinc-800"></select></td>
-                                        <td class="p-1 text-center"><select id="eval-kantin-keceriaan" class="w-full bg-white border border-zinc-300 rounded p-1 text-xs focus:border-zinc-800"></select></td>
-                                        <td class="p-1 text-center"><select id="eval-kantin-keselamatan" class="w-full bg-white border border-zinc-300 rounded p-1 text-xs focus:border-zinc-800"></select></td>
-                                    </tr>
-
-                                    <!-- Row 5: Dewan Makan (NEW ADDITION) -->
-                                    <tr class="hover:bg-zinc-50">
-                                        <td class="p-2 font-medium text-zinc-800">5. DEWAN MAKAN</td>
-                                        <td class="p-1 text-center"><select id="eval-dewan-kebersihan" class="w-full bg-white border border-zinc-300 rounded p-1 text-xs focus:border-zinc-800"></select></td>
-                                        <td class="p-1 text-center"><select id="eval-dewan-keceriaan" class="w-full bg-white border border-zinc-300 rounded p-1 text-xs focus:border-zinc-800"></select></td>
-                                        <td class="p-1 text-center"><select id="eval-dewan-keselamatan" class="w-full bg-white border border-zinc-300 rounded p-1 text-xs focus:border-zinc-800"></select></td>
-                                    </tr>
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Program / Aktiviti / Hal-Hal Lain -->
-                    <div>
-                        <label class="block text-xs font-bold text-zinc-700 uppercase tracking-wide mb-1">
-                            PROGRAM / AKTIVITI / HAL-HAL LAIN
-                        </label>
-                        <textarea id="input-program" rows="3" class="w-full p-2.5 text-xs bg-white border border-zinc-300 rounded focus:border-zinc-800 focus:outline-none transition" placeholder="Latihan sukan, aktiviti asrama, rawatan kecemasan, atau kerosakan..."></textarea>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- SECTION 4: DISEDIAKAN OLEH & DISEMAK OLEH -->
-            <div class="bg-white border border-zinc-200 rounded-lg overflow-hidden shadow-sm">
-                <div class="bg-zinc-100 border-b border-zinc-200 px-4 py-2.5 flex items-center justify-between">
-                    <h3 class="font-bold text-xs uppercase tracking-wide text-zinc-800">
-                        4. PENGESAHAN LAPORAN
-                    </h3>
-                    <div id="admin-status-indicator" class="text-[11px] px-2.5 py-0.5 rounded bg-amber-100 text-amber-800 font-bold border border-amber-300">
-                        Status: Belum Disemak
-                    </div>
-                </div>
-                <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    
-                    <div class="bg-zinc-50 p-3 rounded border border-zinc-200 space-y-2">
-                        <span class="block font-bold text-xs uppercase text-zinc-700">DISEDIAKAN OLEH (GURU BERTUGAS)</span>
-                        <div>
-                            <label class="block text-[11px] text-zinc-500 mb-0.5">Nama Guru / Jurulatih:</label>
-                            <input type="text" id="input-disediakan-nama" list="staff-list" class="w-full p-1.5 text-xs bg-white border border-zinc-300 rounded focus:border-zinc-800" placeholder="Pilih / taip nama">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] text-zinc-500 mb-0.5">Jawatan:</label>
-                            <input type="text" id="input-disediakan-jawatan" value="Guru Bertugas Mingguan" class="w-full p-1.5 text-xs bg-white border border-zinc-300 rounded focus:border-zinc-800">
-                        </div>
-                    </div>
-
-                    <div class="bg-zinc-50 p-3 rounded border border-zinc-200 space-y-2 relative">
-                        <div class="flex justify-between items-center">
-                            <span class="block font-bold text-xs uppercase text-zinc-700">DISEMAK OLEH (PENTADBIR)</span>
-                            <button type="button" onclick="openAdminAuthModal()" class="text-[10px] bg-amber-500 hover:bg-amber-600 text-white px-2 py-0.5 rounded transition font-bold">
-                                <i class="fa-solid fa-key mr-1"></i> Pengesahan Pentadbir
-                            </button>
-                        </div>
-                        <div>
-                            <label class="block text-[11px] text-zinc-500 mb-0.5">Nama Pentadbir / Penyelaras:</label>
-                            <input type="text" id="input-disemak-nama" list="staff-list" class="w-full p-1.5 text-xs bg-white border border-zinc-300 rounded focus:border-zinc-800" placeholder="Pilih / taip nama GPK/Pengetua">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] text-zinc-500 mb-0.5">Jawatan / Catatan Semakan:</label>
-                            <input type="text" id="input-disemak-jawatan" value="GPK HEM / Pentadbir Sekolah" class="w-full p-1.5 text-xs bg-white border border-zinc-300 rounded focus:border-zinc-800">
-                        </div>
-                        <div id="admin-signature-preview-box" class="mt-2 p-2 bg-emerald-50 border border-emerald-200 rounded text-emerald-900 text-xs hidden">
-                            <i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> Disahkan secara digital oleh Pentadbir.
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- SECTION 5: LAPORAN BERGAMBAR -->
-            <div class="bg-white border border-zinc-200 rounded-lg overflow-hidden shadow-sm">
-                <div class="bg-zinc-100 border-b border-zinc-200 px-4 py-2.5 flex items-center justify-between">
-                    <h3 class="font-bold text-xs uppercase tracking-wide text-zinc-800">
-                        5. LAPORAN BERGAMBAR
-                    </h3>
-                    <button onclick="addPhotoCard()" class="text-xs border border-zinc-300 bg-white hover:bg-zinc-100 text-zinc-800 px-2.5 py-1 rounded transition">
-                        + Tambah Gambar
-                    </button>
-                </div>
-                <div class="p-4">
-                    <div id="photo-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                        <!-- Photo cards inserted dynamically -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bottom Action Controls -->
-            <div class="flex flex-wrap gap-2 justify-end pt-2 pb-6">
-                <button onclick="resetCurrentForm()" class="px-4 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs rounded border border-zinc-300 transition">
-                    Set Semula
-                </button>
-                <button onclick="saveReportToStorage()" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white text-xs rounded transition">
-                    Simpan Rekod
-                </button>
-                <button onclick="switchTab('preview')" class="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-100 text-xs font-bold rounded transition">
-                    Pratonton & Cetak Laporan
-                </button>
-            </div>
-
-        </section>
-
-        <!-- ========================================== -->
-        <!-- TAB 2: PRINTABLE OFFICIAL REPORT PREVIEW -->
-        <!-- ========================================== -->
-        <section id="view-preview" class="hidden space-y-4">
-            
-            <!-- Toolbar Control for Print -->
-            <div class="no-print bg-white p-3.5 rounded border border-zinc-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
-                <div>
-                    <h3 class="font-bold text-zinc-800 text-xs uppercase">Pratonton Dokumen Rasmi</h3>
-                    <p class="text-[11px] text-zinc-500">Kertas Format A4. Sedia untuk cetakan atau eksport PDF.</p>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <button onclick="window.print()" class="bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs px-4 py-2 rounded transition flex items-center">
-                        <i class="fa-solid fa-print mr-1.5"></i> Cetak / PDF
-                    </button>
-                    <button onclick="switchTab('form')" class="border border-zinc-300 bg-white hover:bg-zinc-100 text-zinc-700 text-xs px-3 py-2 rounded transition">
-                        Edit Laporan
-                    </button>
-                </div>
-            </div>
-
-            <!-- OFFICIAL PRINT SHEET CONTAINER -->
-            <div id="print-sheet" class="report-card bg-white p-6 sm:p-8 rounded border border-zinc-300 max-w-4xl mx-auto text-black">
-                
-                <!-- HEADER FORMAL -->
-                <div class="text-center border-b-2 border-black pb-3 mb-3">
-                    <h2 class="text-lg sm:text-xl font-bold uppercase tracking-tight">SEKOLAH SUKAN MALAYSIA PAHANG</h2>
-                    <h3 class="text-sm font-bold uppercase text-zinc-900 mt-0.5">LAPORAN GURU BERTUGAS HARIAN / MINGGUAN</h3>
-                    <p class="text-xs font-semibold mt-1">
-                        TEMPOH BERTUGAS : (<span id="print-tempoh-bertugas">20/07/2026 - 24/07/2026</span>)
-                    </p>
-                    <div class="flex justify-center items-center space-x-6 text-xs font-medium mt-1">
-                        <span>TARIKH : <strong id="print-tarikh">20/07/2026</strong></span>
-                        <span>HARI : <strong id="print-hari">ISNIN</strong></span>
-                    </div>
-                </div>
-
-                <!-- TABLE 1: GURU / JURULATIH BERTUGAS -->
-                <div class="mb-4">
-                    <table class="w-full text-xs border-collapse border border-black">
-                        <thead>
-                            <tr class="bg-zinc-100 border-b border-black text-center font-bold">
-                                <td colspan="3" class="p-1 uppercase tracking-wide bg-zinc-200 border-black font-extrabold">
-                                    GURU / JURULATIH BERTUGAS
-                                </td>
-                            </tr>
-                            <tr class="bg-zinc-50 border-b border-black font-bold text-[11px]">
-                                <th class="p-1 w-10 text-center border-r border-black">BIL.</th>
-                                <th class="p-1 border-r border-black text-left">NAMA</th>
-                                <th class="p-1 w-36 text-center">TANDATANGAN</th>
-                            </tr>
-                        </thead>
-                        <tbody id="print-tbody-bertugas">
-                            <!-- JS fills print rows -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- TABLE 2: KEBERADAAN GURU / JURULATIH (TIDAK HADIR) -->
-                <div class="mb-4">
-                    <table class="w-full text-xs border-collapse border border-black">
-                        <thead>
-                            <tr class="bg-zinc-100 border-b border-black text-center font-bold">
-                                <td colspan="3" class="p-1 uppercase tracking-wide bg-zinc-200 border-black font-extrabold">
-                                    KEBERADAAN GURU / JURULATIH (TIDAK HADIR)
-                                </td>
-                            </tr>
-                            <tr class="bg-zinc-50 border-b border-black font-bold text-[11px]">
-                                <th class="p-1 w-10 text-center border-r border-black">BIL.</th>
-                                <th class="p-1 border-r border-black text-left">NAMA</th>
-                                <th class="p-1 text-left">CATATAN</th>
-                            </tr>
-                        </thead>
-                        <tbody id="print-tbody-tidak-hadir">
-                            <!-- JS fills print rows -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- SECTION 3: CATATAN HARIAN GURU BERTUGAS -->
-                <div class="mb-4">
-                    <div class="bg-zinc-200 border border-black p-1 text-center font-extrabold text-xs uppercase tracking-wide">
-                        CATATAN HARIAN GURU BERTUGAS
-                    </div>
-                    
-                    <table class="w-full text-xs border-collapse border border-black border-t-0">
-                        <tr>
-                            <td class="p-1 font-bold w-24 border-r border-b border-black bg-zinc-50">TARIKH :</td>
-                            <td class="p-1 border-r border-b border-black w-36" id="print-catatan-tarikh">20/07/2026</td>
-                            <td class="p-1 font-bold w-28 border-r border-b border-black bg-zinc-50">NAMA GURU :</td>
-                            <td class="p-1 border-b border-black" id="print-catatan-namaguru">-</td>
-                        </tr>
-                        <tr>
-                            <td class="p-1 font-bold border-r border-b border-black bg-zinc-50">HARI :</td>
-                            <td class="p-1 border-r border-b border-black" id="print-catatan-hari">ISNIN</td>
-                            <td colspan="2" class="p-1 border-b border-black"></td>
-                        </tr>
-                        <tr>
-                            <td class="p-1.5 font-bold border-r border-b border-black bg-zinc-50 align-top">
-                                PERHIMPUNAN / UCAPAN / TAKLIMAT
-                            </td>
-                            <td colspan="3" class="p-1 border-b border-black align-top">
-                                <div id="print-perhimpunan-container" class="space-y-1">
-                                    <!-- Dynamic print ucapan entries -->
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <!-- Evaluation Matrix in Print -->
-                    <table class="w-full text-xs border-collapse border border-black border-t-0 text-center">
-                        <thead>
-                            <tr class="bg-zinc-100 border-b border-black font-bold">
-                                <th class="p-1 border-r border-black w-2/5 text-left">PREMIS / LOKASI</th>
-                                <th class="p-1 border-r border-black w-1/5">KEBERSIHAN</th>
-                                <th class="p-1 border-r border-black w-1/5">KECERIAAN</th>
-                                <th class="p-1 w-1/5">KESELAMATAN</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="border-b border-black">
-                                <td class="p-1 border-r border-black text-left font-medium">KAWASAN SEKOLAH</td>
-                                <td class="p-1 border-r border-black" id="print-e-kawasan-keb">Memuaskan</td>
-                                <td class="p-1 border-r border-black" id="print-e-kawasan-kec">Memuaskan</td>
-                                <td class="p-1" id="print-e-kawasan-kes">Memuaskan</td>
-                            </tr>
-                            <tr class="border-b border-black">
-                                <td class="p-1 border-r border-black text-left font-medium">BANGUNAN / KELAS / BENGKEL</td>
-                                <td class="p-1 border-r border-black" id="print-e-bangunan-keb">Memuaskan</td>
-                                <td class="p-1 border-r border-black" id="print-e-bangunan-kec">Memuaskan</td>
-                                <td class="p-1" id="print-e-bangunan-kes">Memuaskan</td>
-                            </tr>
-                            <tr class="border-b border-black">
-                                <td class="p-1 border-r border-black text-left font-medium">TANDAS L DAN P</td>
-                                <td class="p-1 border-r border-black" id="print-e-tandas-keb">Memuaskan</td>
-                                <td class="p-1 border-r border-black" id="print-e-tandas-kec">Memuaskan</td>
-                                <td class="p-1" id="print-e-tandas-kes">Memuaskan</td>
-                            </tr>
-                            <tr class="border-b border-black">
-                                <td class="p-1 border-r border-black text-left font-medium">KANTIN SEKOLAH</td>
-                                <td class="p-1 border-r border-black" id="print-e-kantin-keb">Memuaskan</td>
-                                <td class="p-1 border-r border-black" id="print-e-kantin-kec">Memuaskan</td>
-                                <td class="p-1" id="print-e-kantin-kes">Memuaskan</td>
-                            </tr>
-                            <tr class="border-b border-black">
-                                <td class="p-1 border-r border-black text-left font-medium">DEWAN MAKAN</td>
-                                <td class="p-1 border-r border-black" id="print-e-dewan-keb">Memuaskan</td>
-                                <td class="p-1 border-r border-black" id="print-e-dewan-kec">Memuaskan</td>
-                                <td class="p-1" id="print-e-dewan-kes">Memuaskan</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <table class="w-full text-xs border-collapse border border-black border-t-0">
-                        <tr>
-                            <td class="p-1.5 font-bold w-1/3 border-r border-black bg-zinc-50 align-top">
-                                PROGRAM / AKTIVITI / HAL LAIN
-                            </td>
-                            <td class="p-1.5 align-top whitespace-pre-wrap min-h-[40px]" id="print-program-text">
-                                -
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-
-                <!-- SIGNATURE FOOTER -->
-                <div class="mt-6 pt-2 grid grid-cols-2 gap-6 text-xs">
-                    <div>
-                        <p class="font-bold mb-10">DISEDIAKAN OLEH :</p>
-                        <p class="border-b border-black w-4/5 font-bold uppercase" id="print-dis-nama">....................................................</p>
-                        <p class="text-[11px] text-zinc-600 mt-0.5" id="print-dis-jawatan">Guru Bertugas Mingguan</p>
-                    </div>
-                    <div>
-                        <p class="font-bold mb-2">DISEMAK OLEH :</p>
-                        <div id="print-admin-stamp-area" class="min-h-[50px] mb-2 flex flex-col items-start justify-center">
-                            <span id="print-admin-status-tag" class="text-[10px] px-2 py-0.5 bg-zinc-200 border border-zinc-400 font-bold uppercase mb-1">Status: Belum Disemak</span>
-                            <div id="print-admin-sig-img-wrap" class="hidden">
-                                <img id="print-admin-sig-img" src="" class="h-10 max-w-[120px] object-contain mb-1">
+                    <!-- Date & Week Selector Bar -->
+                    <div class="bg-slate-900/80 p-4 rounded-xl border border-blue-400/30 text-xs space-y-2 w-full md:w-auto">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-slate-300 mb-1">Mula MINGGU:</label>
+                                <input type="date" id="mulaMinggu" onchange="autoCalculateWeek()" class="w-full p-1.5 rounded text-slate-900 font-bold">
+                            </div>
+                            <div>
+                                <label class="block text-slate-300 mb-1">Tamat MINGGU:</label>
+                                <input type="date" id="tamatMinggu" class="w-full p-1.5 rounded text-slate-900 font-bold">
                             </div>
                         </div>
-                        <p class="border-b border-black w-4/5 font-bold uppercase" id="print-sem-nama">....................................................</p>
-                        <p class="text-[11px] text-zinc-600 mt-0.5" id="print-sem-jawatan">GPK HEM / Pentadbir</p>
+                        <div class="grid grid-cols-2 gap-2 pt-1">
+                            <div>
+                                <label class="block text-slate-300 mb-1">Tarikh Laporan:</label>
+                                <input type="date" id="tarikhLaporan" onchange="autoSetDayName()" class="w-full p-1.5 rounded text-slate-900 font-bold">
+                            </div>
+                            <div>
+                                <label class="block text-slate-300 mb-1">Hari:</label>
+                                <input type="text" id="hariLaporan" readonly class="w-full p-1.5 rounded text-slate-700 bg-slate-200 font-bold uppercase">
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- PHOTO GALLERY SECTION IN PRINT -->
-                <div class="mt-8 print-page-break" id="print-photo-section">
-                    <h3 class="font-bold border-b-2 border-black pb-1 mb-3 text-center uppercase tracking-wide text-xs">
-                        LAPORAN BERGAMBAR
+            <!-- BAHAGIAN 1: GURU / JURULATIH BERTUGAS -->
+            <div class="form-card overflow-hidden">
+                <div class="section-banner flex justify-between items-center">
+                    <span><i class="fa-solid fa-users mr-2"></i>1. SENARAI GURU / JURULATIH BERTUGAS</span>
+                    <button type="button" onclick="addDutyRow()" class="px-3 py-1 bg-emerald-500 hover:bg-emerald-600 text-white rounded text-xs transition">
+                        <i class="fa-solid fa-user-plus mr-1"></i>Tambah Staf
+                    </button>
+                </div>
+                <div class="p-4 overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 uppercase border-b-2 border-slate-300">
+                                <th class="p-2.5 w-12 text-center">BIL</th>
+                                <th class="p-2.5">NAMA GURU / JURULATIH</th>
+                                <th class="p-2.5 w-48 text-center">TANDATANGAN DIGITAL</th>
+                                <th class="p-2.5 w-16 text-center">TINDAKAN</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dutyRowsContainer" class="divide-y divide-slate-200">
+                            <!-- Rows dynamically populated -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- BAHAGIAN 2: KEBERADAAN STAF (TIDAK HADIR) -->
+            <div class="form-card overflow-hidden">
+                <div class="section-banner flex justify-between items-center bg-gradient-to-r from-slate-800 to-slate-700">
+                    <span><i class="fa-solid fa-user-xmark mr-2"></i>2. KEBERADAAN GURU / JURULATIH (TIDAK HADIR)</span>
+                    <button type="button" onclick="addAbsentRow()" class="px-3 py-1 bg-emerald-500 hover:bg-emerald-600 text-white rounded text-xs transition">
+                        <i class="fa-solid fa-plus mr-1"></i>Tambah Staf
+                    </button>
+                </div>
+                <div class="p-4 overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 uppercase border-b-2 border-slate-300">
+                                <th class="p-2.5 w-12 text-center">BIL</th>
+                                <th class="p-2.5 w-1/2">NAMA GURU / JURULATIH</th>
+                                <th class="p-2.5">CATATAN / ALASAN (SEBAB TIDAK HADIR)</th>
+                                <th class="p-2.5 w-16 text-center">TINDAKAN</th>
+                            </tr>
+                        </thead>
+                        <tbody id="absentRowsContainer" class="divide-y divide-slate-200">
+                            <!-- Rows dynamically populated -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- BAHAGIAN 3: CATATAN HARIAN & UCAPAN -->
+            <div class="form-card overflow-hidden">
+                <div class="section-banner flex justify-between items-center bg-gradient-to-r from-blue-900 to-indigo-800">
+                    <span><i class="fa-solid fa-bullhorn mr-2"></i>3. CATATAN PERHIMPUNAN / UCAPAN / TAKLIMAT / PENGUMUMAN</span>
+                    <button type="button" onclick="addSpeechRow()" class="px-3 py-1 bg-emerald-500 hover:bg-emerald-600 text-white rounded text-xs transition">
+                        <i class="fa-solid fa-plus mr-1"></i>Tambah Ucapan / Taklimat
+                    </button>
+                </div>
+                <div class="p-4 space-y-4" id="speechContainer">
+                    <!-- Dynamic speech cards -->
+                </div>
+            </div>
+
+            <!-- BAHAGIAN 4: PENILAIAN KEBERSIHAN, KECERIAAN & KESELAMATAN -->
+            <div class="form-card overflow-hidden">
+                <div class="section-banner bg-gradient-to-r from-blue-900 to-indigo-800">
+                    <i class="fa-solid fa-clipboard-check mr-2"></i>4. PENILAIAN KAWASAN & BANGUNAN SEKOLAH
+                </div>
+                <div class="p-4 overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-blue-50 text-blue-900 uppercase border-b-2 border-blue-200">
+                                <th class="p-3 font-bold">LOKASI / KAWASAN</th>
+                                <th class="p-3 font-bold text-center w-1/4">KEBERSIHAN</th>
+                                <th class="p-3 font-bold text-center w-1/4">KECERIAAN</th>
+                                <th class="p-3 font-bold text-center w-1/4">KESELAMATAN</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200" id="evalTableBody">
+                            <!-- Rows dynamically generated -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- BAHAGIAN 5: PROGRAM / AKTIVITI & HAL-HAL LAIN -->
+            <div class="form-card p-4 space-y-4">
+                <h3 class="text-sm font-bold text-blue-900 border-b-2 border-blue-800 pb-2 flex items-center">
+                    <i class="fa-solid fa-calendar-check text-amber-500 mr-2"></i>5. PROGRAM / AKTIVITI / HAL-HAL LAIN
+                </h3>
+                <textarea id="programAktiviti" rows="4" class="w-full p-3 text-xs rounded-lg border-slate-300" placeholder="Tulis catatan mengenai program harian, aktiviti kokurikulum, latihan sukan, atau hal-hal penting lain di sini..."></textarea>
+            </div>
+
+            <!-- BAHAGIAN 6: LAPORAN BERGAMBAR -->
+            <div class="form-card p-4 space-y-4">
+                <div class="flex justify-between items-center border-b-2 border-blue-800 pb-2">
+                    <h3 class="text-sm font-bold text-blue-900 flex items-center">
+                        <i class="fa-solid fa-camera text-amber-500 mr-2"></i>6. LAPORAN BERGAMBAR (MAKSIMUM 4 GAMBAR)
                     </h3>
-                    <div id="print-photo-grid" class="grid grid-cols-2 gap-3">
-                        <!-- JS photo cards -->
-                    </div>
+                    <input type="file" id="photoUpload" accept="image/*" multiple onchange="handlePhotoUpload(event)" class="hidden">
+                    <button type="button" onclick="document.getElementById('photoUpload').click()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition">
+                        <i class="fa-solid fa-upload mr-1.5"></i>Muat Naik Gambar
+                    </button>
                 </div>
-
+                <div id="photoPreviewGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- Image previews rendered here -->
+                </div>
             </div>
-        </section>
 
-        <!-- ========================================== -->
-        <!-- TAB 3: SAVED ARCHIVE / LOCAL STORAGE -->
-        <!-- ========================================== -->
-        <section id="view-archive" class="hidden space-y-4">
-            <div class="bg-white rounded border border-zinc-200 p-4 shadow-sm">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+            <!-- BAHAGIAN 7: PENGESAHAN & PENYERAHAN -->
+            <div class="form-card p-6 bg-slate-900 text-white space-y-4">
+                <h3 class="text-sm font-bold text-amber-400 border-b border-slate-700 pb-2 uppercase tracking-wider">
+                    <i class="fa-solid fa-file-signature mr-2"></i>7. PENGESAHAN PENYEDIAAN LAPORAN
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <h3 class="text-sm font-bold uppercase text-zinc-800">Rekod Laporan Tersimpan</h3>
-                        <p class="text-[11px] text-zinc-500">Penyimpanan dalam memori pelayar web (Offline LocalStorage).</p>
+                        <label class="block text-xs text-slate-300 mb-1">Disediakan Oleh (Ketua Bertugas):</label>
+                        <input type="text" id="disediakanOleh" list="staffList" class="w-full p-2 rounded text-slate-900 text-xs font-bold" placeholder="Cari nama guru bertugas...">
                     </div>
-                    <div class="flex items-center space-x-2">
-                        <button onclick="exportDataJSON()" class="border border-zinc-300 bg-white hover:bg-zinc-100 text-zinc-800 text-xs px-3 py-1.5 rounded transition">
-                            Eksport JSON
-                        </button>
-                        <label class="border border-zinc-300 bg-white hover:bg-zinc-100 text-zinc-800 text-xs px-3 py-1.5 rounded transition cursor-pointer">
-                            Import Backup
-                            <input type="file" id="import-json-file" accept=".json" onchange="importDataJSON(event)" class="hidden">
-                        </label>
+                    <div>
+                        <label class="block text-xs text-slate-300 mb-1">Disemak / Disahkan Oleh (Pentadbir):</label>
+                        <input type="text" id="disemakOleh" class="w-full p-2 rounded text-slate-900 text-xs font-bold" placeholder="Menunggu Pengesahan Pentadbir" readonly>
                     </div>
                 </div>
 
-                <div id="archive-list" class="space-y-2">
-                    <!-- JS renders saved report cards -->
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap justify-end gap-3 pt-4 border-t border-slate-800">
+                    <button type="button" onclick="resetForm()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold rounded-lg transition">
+                        <i class="fa-solid fa-rotate-left mr-1.5"></i>Set Semula
+                    </button>
+                    <button type="button" onclick="saveDraft()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-lg transition">
+                        <i class="fa-solid fa-floppy-disk mr-1.5"></i>Simpan Draf
+                    </button>
+                    <button type="button" onclick="submitFinalReport()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg shadow-lg transition">
+                        <i class="fa-solid fa-paper-plane mr-1.5"></i>Hantar Laporan Rasmi
+                    </button>
                 </div>
             </div>
-        </section>
+
+        </div>
+
+        <!-- ================= PRATONTON & CETAK TAB ================= -->
+        <div id="tabPratonton" class="hidden space-y-4">
+            <div class="no-print bg-amber-100 border-l-4 border-amber-500 p-4 rounded-r-lg flex justify-between items-center">
+                <div class="text-xs text-amber-900">
+                    <i class="fa-solid fa-circle-info mr-2 text-amber-600"></i>
+                    <strong>Halaman Cetakan Rasmi:</strong> Sila pastikan saiz kertas diset kepada **A4** dan orientasi **Potret**.
+                </div>
+                <button onclick="window.print()" class="px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold rounded-lg shadow transition">
+                    <i class="fa-solid fa-print mr-2"></i>Cetak Laporan / Simpan PDF
+                </button>
+            </div>
+
+            <!-- Official Print Template Container -->
+            <div id="printDocument" class="bg-white p-8 rounded-xl shadow-lg border border-slate-300 space-y-6 max-w-4xl mx-auto print-container">
+                
+                <!-- Print Header -->
+                <div class="text-center border-b-2 border-black pb-4 space-y-2">
+                    <div class="flex justify-center mb-2">
+                        <!-- SSMP Crest SVG for Print -->
+                        <svg viewBox="0 0 200 200" class="w-20 h-20">
+                            <circle cx="100" cy="100" r="90" fill="#ffffff" stroke="#000000" stroke-width="6"/>
+                            <path d="M40 140 C70 40 130 40 160 140" fill="none" stroke="#000000" stroke-width="5"/>
+                            <path d="M160 140 C130 40 70 40 40 140" fill="none" stroke="#000000" stroke-width="5"/>
+                            <text x="100" y="105" font-family="sans-serif" font-weight="900" font-size="28" fill="#000000" text-anchor="middle">SSMP</text>
+                            <text x="100" y="125" font-family="sans-serif" font-weight="bold" font-size="10" fill="#000000" text-anchor="middle">STRIVE FOR EXCELLENCE</text>
+                            <circle cx="70" cy="145" r="10" fill="none" stroke="#000000" stroke-width="2"/>
+                            <circle cx="85" cy="152" r="10" fill="none" stroke="#000000" stroke-width="2"/>
+                            <circle cx="100" cy="145" r="10" fill="none" stroke="#000000" stroke-width="2"/>
+                            <circle cx="115" cy="152" r="10" fill="none" stroke="#000000" stroke-width="2"/>
+                            <circle cx="130" cy="145" r="10" fill="none" stroke="#000000" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-lg font-bold tracking-wider uppercase">SEKOLAH SUKAN MALAYSIA PAHANG</h2>
+                    <h3 class="text-md font-bold uppercase underline">LAPORAN GURU / JURULATIH BERTUGAS HARIAN & MINGGUAN</h3>
+                    <p class="text-xs font-semibold">TEMPOH BERTUGAS: <span id="pvTempoh">20/07/2026 - 24/07/2026</span></p>
+                </div>
+
+                <!-- Section 1 & 2 Tables -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div>
+                        <h4 class="font-bold border-b border-black pb-1 mb-2 uppercase">GURU / JURULATIH BERTUGAS</h4>
+                        <table class="w-full border-collapse border border-black print-table">
+                            <thead>
+                                <tr class="bg-slate-100">
+                                    <th class="border border-black p-1 w-8 text-center">BIL</th>
+                                    <th class="border border-black p-1">NAMA</th>
+                                    <th class="border border-black p-1 w-24 text-center">T/TANGAN</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pvDutyBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold border-b border-black pb-1 mb-2 uppercase">KEBERADAAN GURU/JURULATIH (TIDAK HADIR)</h4>
+                        <table class="w-full border-collapse border border-black print-table">
+                            <thead>
+                                <tr class="bg-slate-100">
+                                    <th class="border border-black p-1 w-8 text-center">BIL</th>
+                                    <th class="border border-black p-1">NAMA</th>
+                                    <th class="border border-black p-1">CATATAN</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pvAbsentBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Section 3: Speech -->
+                <div class="text-xs space-y-2">
+                    <h4 class="font-bold border-b border-black pb-1 uppercase flex justify-between">
+                        <span>CATATAN HARIAN GURU BERTUGAS</span>
+                        <span>TARIKH: <span id="pvTarikh">20/07/2026</span> (<span id="pvHari">ISNIN</span>)</span>
+                    </h4>
+                    <div id="pvSpeechContent" class="border border-black p-3 rounded space-y-2 min-h-[60px]">
+                        <!-- Dynamic speech preview -->
+                    </div>
+                </div>
+
+                <!-- Section 4: Evaluation Table -->
+                <div class="text-xs space-y-2">
+                    <h4 class="font-bold border-b border-black pb-1 uppercase">PENILAIAN KAWASAN & BANGUNAN SEKOLAH</h4>
+                    <table class="w-full border-collapse border border-black print-table text-center">
+                        <thead>
+                            <tr class="bg-slate-100">
+                                <th class="border border-black p-1 text-left">LOKASI / KAWASAN</th>
+                                <th class="border border-black p-1">KEBERSIHAN</th>
+                                <th class="border border-black p-1">KECERIAAN</th>
+                                <th class="border border-black p-1">KESELAMATAN</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pvEvalBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- Section 5: Program -->
+                <div class="text-xs space-y-1">
+                    <h4 class="font-bold border-b border-black pb-1 uppercase">PROGRAM / AKTIVITI / HAL-HAL LAIN</h4>
+                    <p id="pvProgram" class="border border-black p-3 rounded min-h-[50px] whitespace-pre-line"></p>
+                </div>
+
+                <!-- Section 6: Photo Grid -->
+                <div class="text-xs space-y-2">
+                    <h4 class="font-bold border-b border-black pb-1 uppercase">LAPORAN BERGAMBAR</h4>
+                    <div id="pvPhotoGrid" class="grid grid-cols-2 gap-3"></div>
+                </div>
+
+                <!-- Signatures Footer -->
+                <div class="pt-6 grid grid-cols-2 gap-8 text-xs font-semibold">
+                    <div class="space-y-12">
+                        <p>DISEDIAKAN OLEH:</p>
+                        <div class="border-b border-black w-3/4"></div>
+                        <p id="pvDisediakanNama">( GURU BERTUGAS )</p>
+                    </div>
+                    <div class="space-y-12">
+                        <p>DISEMAK & DISAHKAN OLEH:</p>
+                        <div class="border-b border-black w-3/4 relative">
+                            <div id="pvAdminStamp" class="hidden absolute -top-8 left-4 border-2 border-emerald-700 text-emerald-800 px-3 py-1 font-extrabold uppercase transform -rotate-6 text-xs rounded opacity-80">
+                                TELAH DISAHKAN PENTADBIR
+                            </div>
+                        </div>
+                        <p id="pvDisemakNama">( PENTADBIR SSMP )</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ================= SENARAI REKOD TAB ================= -->
+        <div id="tabRekod" class="hidden space-y-4">
+            <div class="form-card p-6 space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-200 pb-3">
+                    <h2 class="text-base font-bold text-blue-900 flex items-center">
+                        <i class="fa-solid fa-box-archive text-amber-500 mr-2"></i>SENARAI REKOD LAPORAN TERSIMPAN
+                    </h2>
+                    <div class="flex space-x-2">
+                        <button onclick="exportJSON()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded transition">
+                            <i class="fa-solid fa-download mr-1"></i>Eksport JSON
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 uppercase border-b-2 border-slate-300">
+                                <th class="p-3">TARIKH / HARI</th>
+                                <th class="p-3">TEMPOH MINGGU</th>
+                                <th class="p-3">DISEDIAKAN OLEH</th>
+                                <th class="p-3 text-center">STATUS</th>
+                                <th class="p-3 text-center">TINDAKAN</th>
+                            </tr>
+                        </thead>
+                        <tbody id="archiveTableBody" class="divide-y divide-slate-200">
+                            <!-- Archived reports rendered here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
     </main>
 
-    <!-- DATALIST FOR AUTOCOMPLETE -->
-    <datalist id="staff-list">
-        <!-- JS fills staff list options -->
-    </datalist>
-
-    <!-- PENTADBIR AUTH & VERIFICATION MODAL -->
-    <div id="admin-auth-modal" class="fixed inset-0 bg-zinc-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-lg max-w-md w-full p-5 shadow-2xl border border-zinc-300 space-y-4">
+    <!-- Modal Digital Signature Pad -->
+    <div id="sigModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl border border-slate-300 max-w-md w-full p-5 space-y-4">
             <div class="flex justify-between items-center border-b pb-2">
-                <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-user-shield text-amber-500 text-base"></i>
-                    <h4 class="font-bold text-zinc-800 text-xs uppercase">Akses Pentadbir (GPK HEM / Pengetua)</h4>
-                </div>
-                <button onclick="closeAdminAuthModal()" class="text-zinc-400 hover:text-zinc-600"><i class="fa-solid fa-xmark text-sm"></i></button>
+                <h3 class="text-sm font-bold text-slate-900"><i class="fa-solid fa-pen-nib text-blue-600 mr-2"></i>Tandatangan Digital Staf</h3>
+                <button onclick="closeSigModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
-
-            <div id="admin-login-step" class="space-y-3">
-                <p class="text-xs text-zinc-600">Masukkan PIN Pentadbir untuk mengakses modul semakan & pengesahan laporan:</p>
-                <div>
-                    <label class="block text-[11px] font-bold text-zinc-700 mb-1">PIN Akses (Standard: 1234):</label>
-                    <input type="password" id="admin-pin-input" maxlength="6" class="w-full p-2 text-center text-sm font-bold tracking-widest border border-zinc-300 rounded focus:border-zinc-800" placeholder="••••">
+            <div class="border-2 border-dashed border-slate-300 rounded-lg bg-slate-50 flex justify-center">
+                <canvas id="sigCanvas" width="350" height="180" class="cursor-crosshair"></canvas>
+            </div>
+            <div class="flex justify-between items-center pt-2">
+                <button onclick="clearSigPad()" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded transition">Bersihkan</button>
+                <div class="space-x-2">
+                    <button onclick="closeSigModal()" class="px-3 py-1.5 bg-slate-400 hover:bg-slate-500 text-white text-xs font-bold rounded transition">Batal</button>
+                    <button onclick="saveSigPad()" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded transition">Simpan Tandatangan</button>
                 </div>
-                <button onclick="verifyAdminPin()" class="w-full py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded transition">
-                    Lakukan Pengesahan PIN
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Access Admin -->
+    <div id="adminModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl border border-slate-300 max-w-md w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="text-sm font-bold text-blue-900"><i class="fa-solid fa-user-shield text-amber-500 mr-2"></i>Akses Pengesahan Pentadbir</h3>
+                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <div id="adminAuthBox" class="space-y-3">
+                <p class="text-xs text-slate-600">Sila masukkan PIN Keselamatan Pentadbir untuk meluluskan & mengesahkan laporan harian.</p>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">PIN Pentadbir (Laluan: 1234):</label>
+                    <input type="password" id="adminPinInput" class="w-full p-2 rounded text-center text-lg font-bold tracking-widest border-slate-300">
+                </div>
+                <button onclick="verifyAdminPin()" class="w-full py-2 bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold rounded transition">
+                    Log Masuk Pentadbir
                 </button>
             </div>
 
-            <div id="admin-panel-step" class="hidden space-y-3">
-                <div class="bg-amber-50 border border-amber-200 p-2.5 rounded text-xs text-amber-900">
-                    <p class="font-bold"><i class="fa-solid fa-lock-open mr-1"></i> Sesi Pentadbir Aktif</p>
-                    <p class="text-[11px] text-amber-800 mt-0.5">Anda boleh meluluskan laporan ini dan meletakkan cop/tandatangan digital.</p>
+            <div id="adminControlBox" class="hidden space-y-4">
+                <div class="bg-emerald-50 border border-emerald-200 p-3 rounded text-xs text-emerald-800 flex items-center">
+                    <i class="fa-solid fa-shield-check text-emerald-600 text-lg mr-2.5"></i>
+                    <div>
+                        <strong class="block">Akses Pentadbir Aktif</strong>
+                        <span>Sistem bersedia untuk modul Semakan & Pengesahan.</span>
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-[11px] font-bold text-zinc-700 mb-1">Status Semakan Laporan:</label>
-                    <select id="admin-status-select" class="w-full p-1.5 text-xs bg-white border border-zinc-300 rounded focus:border-zinc-800">
-                        <option value="BELUM DISEMAK">BELUM DISEMAK</option>
-                        <option value="TELAH DISEMAK & DISAHKAN">TELAH DISEMAK & DISAHKAN</option>
-                        <option value="PERLU REVISI">PERLU REVISI / DIBETULKAN</option>
+                <div class="space-y-2 text-xs">
+                    <label class="block font-bold text-slate-700">Nama Pentadbir Disemak:</label>
+                    <input type="text" id="adminNameInput" class="w-full p-2 rounded text-xs font-bold border-slate-300" value="PENGETUA / GPK HEM SSMP">
+                    
+                    <label class="block font-bold text-slate-700 pt-2">Status Pengesahan Laporan:</label>
+                    <select id="adminStatusSelect" class="w-full p-2 rounded text-xs font-bold border-slate-300">
+                        <option value="DISAHKAN">TELAH DISEMAK & DISAHKAN</option>
+                        <option value="PERLU REVISI">PERLU REVISI / PEMBETULAN</option>
                     </select>
                 </div>
 
-                <div>
-                    <label class="block text-[11px] font-bold text-zinc-700 mb-1">Nama Pentadbir Menyemak:</label>
-                    <input type="text" id="admin-reviewer-name" list="staff-list" class="w-full p-1.5 text-xs bg-white border border-zinc-300 rounded focus:border-zinc-800" placeholder="Pilih / taip nama pentadbir">
-                </div>
-
-                <div>
-                    <label class="block text-[11px] font-bold text-zinc-700 mb-1">Catatan Ulasan Pentadbir:</label>
-                    <textarea id="admin-review-comments" rows="2" class="w-full p-1.5 text-xs bg-white border border-zinc-300 rounded focus:border-zinc-800" placeholder="Ulasan atau teguran pentadbir..."></textarea>
-                </div>
-
-                <div class="pt-2 flex justify-between items-center border-t">
-                    <button onclick="closeAdminAuthModal()" class="px-3 py-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs rounded">Batal</button>
-                    <button onclick="applyAdminVerification()" class="px-4 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs rounded transition">
-                        Simpan Pengesahan Pentadbir
-                    </button>
+                <div class="pt-2 flex justify-end space-x-2">
+                    <button onclick="closeAdminModal()" class="px-3 py-1.5 bg-slate-300 text-slate-700 text-xs font-bold rounded">Tutup</button>
+                    <button onclick="applyAdminApproval()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded">Terapkan Pengesahan</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- FIREBASE CLOUD DATABASE CONFIG MODAL -->
-    <div id="firebase-config-modal" class="fixed inset-0 bg-zinc-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-lg max-w-lg w-full p-5 shadow-2xl border border-zinc-300 space-y-4">
-            <div class="flex justify-between items-center border-b pb-2">
-                <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-cloud text-blue-500 text-base"></i>
-                    <h4 class="font-bold text-zinc-800 text-xs uppercase">Tetapan Pangkalan Data Pusat (Firebase Cloud)</h4>
-                </div>
-                <button onclick="closeFirebaseConfigModal()" class="text-zinc-400 hover:text-zinc-600"><i class="fa-solid fa-xmark text-sm"></i></button>
-            </div>
+    <!-- Staff Datalist -->
+    <datalist id="staffList">
+        <!-- Guru (57) -->
+        <option value="ZAIDY BIN MOHD YUNUS">
+        <option value="ROSHALIZA BINTI MOHAMED">
+        <option value="RAFIDI BIN ABD. JABAR">
+        <option value="MOHD SAIFUL BAKTIA BIN IBRAHIM">
+        <option value="SITI SHAHIDA BINTI ABDULLAH">
+        <option value="Dr. MAZMA SYAHIDATUL AYUNI BT MAZLAN">
+        <option value="MOHD SYAFIQ LUQMAN BIN SHAMSUDDIN">
+        <option value="MOHD AZWAN BIN MISLIM">
+        <option value="MOHD NAWAWI BIN ZAKARIA">
+        <option value="FONG YEN MIN">
+        <option value="NAZRI BIN MOHAMED">
+        <option value="MOHD SHAHRIL BIN ABDUL MALEK">
+        <option value="NORAZURA AKMA BINTI SENIN">
+        <option value="NURZILA BINTI ASUR">
+        <option value="MOHAMAD SAIFUDDIN BIN SAID">
+        <option value="NUR AFIQAH BINTI MOHD ASHRI">
+        <option value="MOHAMAD HAZEEMAN BIN ZULLKIFLI">
+        <option value="AHMAD BAIHAQI BIN MOHD ROZI">
+        <option value="RABBIHAH BINTI YAKOB">
+        <option value="SITI ESYAH BINTI BAHARI">
+        <option value="NOORSHAFINAH BINTI AHMAD">
+        <option value="SITI ZARLINA BINTI KARIM">
+        <option value="RASIDAH BINTI ASRU @ ASRON">
+        <option value="SAMINI A/P ANMPALAGAN">
+        <option value="HADANIAH BINTI RAZALI">
+        <option value="MUHAMMAD AIZUDDIN BIN ABDUL WAHAB">
+        <option value="MUHAMAD SAFWAN BIN MAT SAKRI">
+        <option value="NURUL HIDAYAH BINTI MUZAKARIA">
+        <option value="ANWAR BIN ISMAIL">
+        <option value="BETHURAJEVENV A/P PETHRAJOO">
+        <option value="NOR AZLINDA BINTI ABDULLAH">
+        <option value="NURULHANA BINTI ZAKARIA">
+        <option value="SITI ROHAYA BINTI YAHYA">
+        <option value="SITINURNABILAHUDA BINTI MOHD HAYAT">
+        <option value="ZULHILMI QUSYAIRI BIN AZMAN">
+        <option value="MUHAMAD NUR FIRDAUS BIN MOHD ASRI">
+        <option value="MUHAMMAD AMIRUL SYAFIQ BIN ABDUL HAMID">
+        <option value="NOOR ADILAH BINTI AZHAR">
+        <option value="NOR ATIKA BINTI ABDUL MANAN">
+        <option value="SITI MARYAM BINTI TAN">
+        <option value="NORZULIANA BINTI ABD. HAMID">
+        <option value="FATIN ILIA BINTI AHMAT">
+        <option value="NIK MUHAMMAD AFIQ IQUAN BIN HASHIM">
+        <option value="SYASYA IZZATEY BINTI ABD SAMAD">
+        <option value="MUHAMMAD FIRDAUS BIN MOHAMA NIZAN">
+        <option value="NUR ATHIRAH SYAMIMI BINTI BAHARUDDIN">
+        <option value="NURUL HAFIZAH BINTI ABDUL AZIZ">
+        <option value="ZULKIFLI BIN ALIAS">
+        <option value="ZATIL FARYANI BINTI MUHAMMAD ZAID">
+        <option value="FARHANA BINTI MOHAMAD RADZI">
+        <option value="ADIRA FAZLIN BINTI MOHD ARIF">
+        <option value="NOOR ALYA SYAHIRA BINTI ABDUL HALIM">
+        <option value="AHMAD SHAZWAN NAJMI BIN MOHD ASRI">
+        <option value="NURFATIN BINTI SUGIONO">
+        <option value="MOHD KHAIRI BIN HAJI YACOB">
+        <option value="MUHASHAHRUL SHAZMIE BIN MOHAMED">
+        <option value="MUHAMMAD NOR FARIHIN BIN NOR HAKIMI">
+        <!-- Jurulatih (23) -->
+        <option value="SASITHARAN A/L MUNIANDI">
+        <option value="KENNY THAM YEW CHING">
+        <option value="NASIR BIN IDRIS">
+        <option value="MOHD NASRUL HAKIM BIN HAJI MOHAMAD ZAHIR">
+        <option value="MOHD FAUZI BIN SULAIMAN">
+        <option value="NG SIANG FEY">
+        <option value="MOHD ZERRY BIN NAZERI">
+        <option value="ABDUL HAKIM BIN YUNUS">
+        <option value="MUHAMAD ZAWAWI BIN MAJID">
+        <option value="Dr. JENNE LEE LING HUEY">
+        <option value="NURMAHLIANA ZAIRANI BT MUHAMAD ZAINI">
+        <option value="MOHD FIRDAUS BIN ISA">
+        <option value="TOO YING ING">
+        <option value="MUHAMMAD DZAFRAN ASYRAAF BIN MUHAMAD ZAINUDIN">
+        <option value="FAZLI HISHAM BIN FAUZI">
+        <option value="MOHAMAD NAZEER BIN BIN MOHAMED NESHARAH">
+        <option value="MUHAMMAD SYAFIQ FATHUDDIN BIN AMRAN">
+        <option value="MUHAMAD AMIRUL NAIM BIN ABDUL GHANI">
+        <option value="MOHD SHAIFULLIZAM BIN ABDULLAH">
+        <option value="SITI AISYAH BINTI NORA RAHIS">
+        <option value="NUR HARITHAH HAFIFAH BINTI HATIP">
+        <option value="SITI NUR FARA'SHAFIRA BINTI SALSABRI">
+        <option value="NUR SYAHIRA BINTI MOHD">
+    </datalist>
 
-            <p class="text-xs text-zinc-600 leading-relaxed">
-                Aplikasi ini menyokong penyimpanan awan secara *Realtime*. Sila masukkan kunci konfigurasi Firebase projek sekolah anda supaya semua staf berkongsi rekod yang sama secara automatik:
-            </p>
-
-            <div class="space-y-2">
-                <div>
-                    <label class="block text-[11px] font-bold text-zinc-700 mb-0.5">Firebase Database URL:</label>
-                    <input type="text" id="fb-cfg-dburl" class="w-full p-1.5 text-xs bg-white border border-zinc-300 rounded" placeholder="https://ssmp-elaporan-default-rtdb.firebaseio.com">
-                </div>
-                <div>
-                    <label class="block text-[11px] font-bold text-zinc-700 mb-0.5">Firebase API Key:</label>
-                    <input type="text" id="fb-cfg-apikey" class="w-full p-1.5 text-xs bg-white border border-zinc-300 rounded" placeholder="AIzaSy...">
-                </div>
-                <div>
-                    <label class="block text-[11px] font-bold text-zinc-700 mb-0.5">Project ID:</label>
-                    <input type="text" id="fb-cfg-projid" class="w-full p-1.5 text-xs bg-white border border-zinc-300 rounded" placeholder="ssmp-elaporan">
-                </div>
-            </div>
-
-            <div class="bg-blue-50 border border-blue-200 p-2.5 rounded text-[11px] text-blue-900 space-y-1">
-                <p class="font-bold"><i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> Mod Penyimpanan Semasa:</p>
-                <p id="firebase-mode-status">Memori Tempatan (Offline LocalStorage)</p>
-            </div>
-
-            <div class="flex justify-between items-center border-t pt-3">
-                <button onclick="clearFirebaseConfig()" class="px-3 py-1.5 text-xs border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 rounded">Guna Mod Offline</button>
-                <button onclick="saveFirebaseConfig()" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded transition">
-                    Sambung ke Firebase
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- SIGNATURE DRAW MODAL -->
-    <div id="sig-modal" class="fixed inset-0 bg-zinc-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-lg max-w-md w-full p-4 shadow-xl border border-zinc-300 space-y-3">
-            <div class="flex justify-between items-center">
-                <h4 class="font-bold text-zinc-800 text-xs uppercase">Tandatangan Digital</h4>
-                <button onclick="closeSigModal()" class="text-zinc-400 hover:text-zinc-600"><i class="fa-solid fa-xmark text-sm"></i></button>
-            </div>
-            <p class="text-[11px] text-zinc-500">Sila lukis tandatangan di bawah:</p>
-            <div class="flex justify-center">
-                <canvas id="sig-pad" width="340" height="140" class="sig-canvas"></canvas>
-            </div>
-            <div class="flex justify-between items-center pt-1">
-                <button onclick="clearSigPad()" class="px-2.5 py-1 bg-zinc-100 text-zinc-700 text-xs rounded border border-zinc-300 hover:bg-zinc-200">
-                    Padam
-                </button>
-                <div class="space-x-1.5">
-                    <button onclick="closeSigModal()" class="px-2.5 py-1 bg-white text-zinc-600 text-xs rounded border border-zinc-200">Batal</button>
-                    <button onclick="saveSigPad()" class="px-3 py-1 bg-zinc-900 text-white text-xs font-bold rounded hover:bg-zinc-800">Gunakan</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!-- Global Application Logic Script -->
     <script>
-        // Expanded Evaluation Options
-        const EVALUATION_OPTIONS = [
-            "Memuaskan",
-            "Cemerlang",
-            "Sangat Memuaskan",
-            "Baik",
-            "Sederhana",
-            "Perlu Penambahbaikan",
-            "Tidak Memuaskan",
-            "Tidak Berkenaan (N/A)"
+        // Global Constants & State
+        const EVAL_OPTIONS = [
+            'Cemerlang', 'Sangat Memuaskan', 'Memuaskan', 
+            'Baik', 'Sederhana', 'Perlu Penambahbaikan', 
+            'Tidak Memuaskan', 'Tidak Berkenaan (N/A)'
         ];
 
-        // Admin Security & Status State
-        const DEFAULT_ADMIN_PIN = "1234";
-        let isAdminLoggedIn = false;
-        let currentAdminVerification = {
-            status: "BELUM DISEMAK",
-            reviewerName: "",
-            comments: "",
-            verifiedAt: null
-        };
-
-        // Firebase Cloud Global Instance
-        let firebaseApp = null;
-        let firebaseDb = null;
-        let isFirebaseConnected = false;
-
-        // Staff Data
-        const GURU_LIST = [
-            "ZAIDY BIN MOHD YUNUS",
-            "ROSHALIZA BINTI MOHAMED",
-            "RAFIDI BIN ABD. JABAR",
-            "MOHD SAIFUL BAKTIA BIN IBRAHIM",
-            "SITI SHAHIDA BINTI ABDULLAH",
-            "Dr. MAZMA SYAHIDATUL AYUNI BT MAZLAN",
-            "MOHD SYAFIQ LUQMAN BIN SHAMSUDDIN",
-            "MOHD AZWAN BIN MISLIM",
-            "MOHD NAWAWI BIN ZAKARIA",
-            "FONG YEN MIN",
-            "NAZRI BIN MOHAMED",
-            "MOHD SHAHRIL BIN ABDUL MALEK",
-            "NORAZURA AKMA BINTI SENIN",
-            "NURZILA BINTI ASUR",
-            "MOHAMAD SAIFUDDIN BIN SAID",
-            "NUR AFIQAH BINTI MOHD ASHRI",
-            "MOHAMAD HAZEEMAN BIN ZULLKIFLI",
-            "AHMAD BAIHAQI BIN MOHD ROZI",
-            "RABBIHAH BINTI YAKOB",
-            "SITI ESYAH BINTI BAHARI",
-            "NOORSHAFINAH BINTI AHMAD",
-            "SITI ZARLINA BINTI KARIM",
-            "RASIDAH BINTI ASRU @ ASRON",
-            "SAMINI A/P ANMPALAGAN",
-            "HADANIAH BINTI RAZALI",
-            "MUHAMMAD AIZUDDIN BIN ABDUL WAHAB",
-            "MUHAMAD SAFWAN BIN MAT SAKRI",
-            "NURUL HIDAYAH BINTI MUZAKARIA",
-            "ANWAR BIN ISMAIL",
-            "BETHURAJEVENV A/P PETHRAJOO",
-            "NOR AZLINDA BINTI ABDULLAH",
-            "NURULHANA BINTI ZAKARIA",
-            "SITI ROHAYA BINTI YAHYA",
-            "SITINURNABILAHUDA BINTI MOHD HAYAT",
-            "ZULHILMI QUSYAIRI BIN AZMAN",
-            "MUHAMAD NUR FIRDAUS BIN MOHD ASRI",
-            "MUHAMMAD AMIRUL SYAFIQ BIN ABDUL HAMID",
-            "NOOR ADILAH BINTI AZHAR",
-            "NOR ATIKA BINTI ABDUL MANAN",
-            "SITI MARYAM BINTI TAN",
-            "NORZULIANA BINTI ABD. HAMID",
-            "FATIN ILIA BINTI AHMAT",
-            "NIK MUHAMMAD AFIQ IQUAN BIN HASHIM",
-            "SYASYA IZZATEY BINTI ABD SAMAD",
-            "MUHAMMAD FIRDAUS BIN MOHAMA NIZAN",
-            "NUR ATHIRAH SYAMIMI BINTI BAHARUDDIN",
-            "NURUL HAFIZAH BINTI ABDUL AZIZ",
-            "ZULKIFLI BIN ALIAS",
-            "ZATIL FARYANI BINTI MUHAMMAD ZAID",
-            "FARHANA BINTI MOHAMAD RADZI",
-            "ADIRA FAZLIN BINTI MOHD ARIF",
-            "NOOR ALYA SYAHIRA BINTI ABDUL HALIM",
-            "AHMAD SHAZWAN NAJMI BIN MOHD ASRI",
-            "NURFATIN BINTI SUGIONO",
-            "MOHD KHAIRI BIN HAJI YACOB",
-            "MUHASHAHRUL SHAZMIE BIN MOHAMED",
-            "MUHAMMAD NOR FARIHIN BIN NOR HAKIMI"
+        const EVAL_LOCATIONS = [
+            'Dewan Makan',
+            'Kawasan Sekolah',
+            'Bangunan / Kelas / Bengkel',
+            'Tandas L dan P',
+            'Kantin Sekolah'
         ];
 
-        const JURULATIH_LIST = [
-            "SASITHARAN A/L MUNIANDI",
-            "KENNY THAM YEW CHING",
-            "NASIR BIN IDRIS",
-            "MOHD NASRUL HAKIM BIN HAJI MOHAMAD ZAHIR",
-            "MOHD FAUZI BIN SULAIMAN",
-            "NG SIANG FEY",
-            "MOHD ZERRY BIN NAZERI",
-            "ABDUL HAKIM BIN YUNUS",
-            "MUHAMAD ZAWAWI BIN MAJID",
-            "Dr. JENNE LEE LING HUEY",
-            "NURMAHLIANA ZAIRANI BT MUHAMAD ZAINI",
-            "MOHD FIRDAUS BIN ISA",
-            "TOO YING ING",
-            "MUHAMMAD DZAFRAN ASYRAAF BIN MUHAMAD ZAINUDIN",
-            "FAZLI HISHAM BIN FAUZI",
-            "MOHAMAD NAZEER BIN BIN MOHAMED NESHARAH",
-            "MUHAMMAD SYAFIQ FATHUDDIN BIN AMRAN",
-            "MUHAMAD AMIRUL NAIM BIN ABDUL GHANI",
-            "MOHD SHAIFULLIZAM BIN ABDULLAH",
-            "SITI AISYAH BINTI NORA RAHIS",
-            "NUR HARITHAH HAFIFAH BINTI HATIP",
-            "SITI NUR FARA'SHAFIRA BINTI SALSABRI",
-            "NUR SYAHIRA BINTI MOHD"
-        ];
+        let currentActiveDutyRowIndex = null;
+        let signaturePadInstance = null;
+        let uploadedImages = [];
+        let dutySignaturesData = {};
 
-        const ALL_STAFF = [...GURU_LIST.map(n => ({ name: n, type: 'GURU' })), ...JURULATIH_LIST.map(n => ({ name: n, type: 'JURULATIH' }))];
-
-        // State Storage
-        let dutyList = [];
-        let absentList = [];
-        let photoList = [];
-        let ucapanList = [];
-        let currentSigIndex = null;
-
-        window.onload = function() {
-            initDatalist();
-            populateEvaluationSelects();
-            initDefaultDutyList();
-            initDefaultAbsentList();
-            renderDutyFormRows();
-            renderAbsentFormRows();
-            initDefaultDates();
-            setupSigCanvas();
-            initFirebaseIfConfigured();
+        // DOM Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            initDates();
+            renderDutyFormRows(3); // Start with 3 default rows
+            renderAbsentFormRows(2);
+            renderSpeechFormRows(1);
+            renderEvalTable();
+            initSignaturePad();
             loadReportsFromStorage();
-            renderDirectory();
+        });
 
-            const draft = localStorage.getItem('ssmp_report_draft');
-            if (draft) {
-                try {
-                    const data = JSON.parse(draft);
-                    populateFormFromData(data);
-                } catch(e) {
-                    addUcapanCard();
-                }
-            } else {
-                addUcapanCard();
-            }
-        };
+        // Date Calculators
+        function initDates() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            
+            document.getElementById('tarikhLaporan').value = `${yyyy}-${mm}-${dd}`;
+            document.getElementById('mulaMinggu').value = `${yyyy}-${mm}-20`;
+            document.getElementById('tamatMinggu').value = `${yyyy}-${mm}-24`;
 
-        function initFirebaseIfConfigured() {
-            const storedCfg = localStorage.getItem('ssmp_firebase_config');
-            if (!storedCfg) {
-                updateCloudStatusUI(false, 'Luar Talian (Tempatan)');
-                return;
-            }
+            autoSetDayName();
+        }
 
-            try {
-                const config = JSON.parse(storedCfg);
-                if (config && config.databaseURL) {
-                    if (!firebase.apps.length) {
-                        firebaseApp = firebase.initializeApp(config);
-                    } else {
-                        firebaseApp = firebase.app();
-                    }
-                    firebaseDb = firebase.database();
-                    isFirebaseConnected = true;
-                    updateCloudStatusUI(true, 'Awan Pusat (Online)');
+        function autoSetDayName() {
+            const dateVal = document.getElementById('tarikhLaporan').value;
+            if(!dateVal) return;
+            const days = ['AHAD', 'ISNIN', 'SELASA', 'RABU', 'KHAMIS', 'JUMAAT', 'SABTU'];
+            const d = new Date(dateVal);
+            document.getElementById('hariLaporan').value = days[d.getDay()];
+        }
 
-                    // Listen to real-time changes
-                    firebaseDb.ref('ssmp_reports').on('value', (snapshot) => {
-                        const val = snapshot.val();
-                        if (val) {
-                            const cloudReports = Object.values(val);
-                            localStorage.setItem('ssmp_reports_archive', JSON.stringify(cloudReports));
-                            loadReportsFromStorage();
-                        }
-                    });
-                }
-            } catch (err) {
-                console.error("Firebase init failed:", err);
-                updateCloudStatusUI(false, 'Ralat Firebase');
+        function autoCalculateWeek() {
+            const startVal = document.getElementById('mulaMinggu').value;
+            if(!startVal) return;
+            const startDate = new Date(startVal);
+            const endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + 4); // Friday
+
+            const yyyy = endDate.getFullYear();
+            const mm = String(endDate.getMonth() + 1).padStart(2, '0');
+            const dd = String(endDate.getDate()).padStart(2, '0');
+            document.getElementById('tamatMinggu').value = `${yyyy}-${mm}-${dd}`;
+        }
+
+        // Tab Switching Logic
+        function switchTab(tab) {
+            document.getElementById('tabBorang').classList.add('hidden');
+            document.getElementById('tabPratonton').classList.add('hidden');
+            document.getElementById('tabRekod').classList.add('hidden');
+
+            document.getElementById('tabBtnBorang').className = "px-4 py-2 text-xs font-bold rounded-lg bg-slate-800 text-slate-300 transition";
+            document.getElementById('tabBtnPratonton').className = "px-4 py-2 text-xs font-bold rounded-lg bg-slate-800 text-slate-300 transition";
+            document.getElementById('tabBtnRekod').className = "px-4 py-2 text-xs font-bold rounded-lg bg-slate-800 text-slate-300 transition";
+
+            if(tab === 'borang') {
+                document.getElementById('tabBorang').classList.remove('hidden');
+                document.getElementById('tabBtnBorang').className = "px-4 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white shadow transition";
+            } else if(tab === 'pratonton') {
+                updatePrintPreview();
+                document.getElementById('tabPratonton').classList.remove('hidden');
+                document.getElementById('tabBtnPratonton').className = "px-4 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white shadow transition";
+            } else if(tab === 'rekod') {
+                loadReportsFromStorage();
+                document.getElementById('tabRekod').classList.remove('hidden');
+                document.getElementById('tabBtnRekod').className = "px-4 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white shadow transition";
             }
         }
 
-        function updateCloudStatusUI(connected, label) {
-            const dot = document.getElementById('cloud-dot');
-            const txt = document.getElementById('cloud-status-text');
-            const modeStatus = document.getElementById('firebase-mode-status');
-
-            if (dot && txt) {
-                txt.innerText = label;
-                if (connected) {
-                    dot.className = "w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse";
-                } else {
-                    dot.className = "w-2 h-2 rounded-full bg-amber-500 mr-1.5";
-                }
-            }
-
-            if (modeStatus) {
-                modeStatus.innerText = connected ? `Tersambung ke ${label}` : 'Memori Tempatan (Offline LocalStorage)';
+        // Section 1: Duty Staff Rows
+        function renderDutyFormRows(count) {
+            const container = document.getElementById('dutyRowsContainer');
+            container.innerHTML = '';
+            for(let i = 0; i < count; i++) {
+                addDutyRow();
             }
         }
 
-        function openFirebaseConfigModal() {
-            const storedCfg = localStorage.getItem('ssmp_firebase_config');
-            if (storedCfg) {
-                try {
-                    const c = JSON.parse(storedCfg);
-                    document.getElementById('fb-cfg-dburl').value = c.databaseURL || '';
-                    document.getElementById('fb-cfg-apikey').value = c.apiKey || '';
-                    document.getElementById('fb-cfg-projid').value = c.projectId || '';
-                } catch(e){}
-            }
-            document.getElementById('firebase-config-modal').classList.remove('hidden');
-        }
-
-        function closeFirebaseConfigModal() {
-            document.getElementById('firebase-config-modal').classList.add('hidden');
-        }
-
-        function saveFirebaseConfig() {
-            const dbUrl = document.getElementById('fb-cfg-dburl').value.trim();
-            const apiKey = document.getElementById('fb-cfg-apikey').value.trim();
-            const projId = document.getElementById('fb-cfg-projid').value.trim();
-
-            if (!dbUrl) {
-                showToast('Sila masukkan sekurang-kurangnya Database URL');
-                return;
-            }
-
-            const cfg = { databaseURL: dbUrl, apiKey: apiKey, projectId: projId };
-            localStorage.setItem('ssmp_firebase_config', JSON.stringify(cfg));
-            closeFirebaseConfigModal();
-            initFirebaseIfConfigured();
-            showToast('Tetapan Firebase disimpan');
-        }
-
-        function clearFirebaseConfig() {
-            localStorage.removeItem('ssmp_firebase_config');
-            isFirebaseConnected = false;
-            closeFirebaseConfigModal();
-            updateCloudStatusUI(false, 'Luar Talian (Tempatan)');
-            showToast('Bertukar ke Mod Offline');
-        }
-
-        function openAdminAuthModal() {
-            const modal = document.getElementById('admin-auth-modal');
-            const loginStep = document.getElementById('admin-login-step');
-            const panelStep = document.getElementById('admin-panel-step');
-
-            if (isAdminLoggedIn) {
-                loginStep.classList.add('hidden');
-                panelStep.classList.remove('hidden');
-                document.getElementById('admin-status-select').value = currentAdminVerification.status || 'BELUM DISEMAK';
-                document.getElementById('admin-reviewer-name').value = currentAdminVerification.reviewerName || document.getElementById('input-disemak-nama').value || '';
-                document.getElementById('admin-review-comments').value = currentAdminVerification.comments || '';
-            } else {
-                loginStep.classList.remove('hidden');
-                panelStep.classList.add('hidden');
-                document.getElementById('admin-pin-input').value = '';
-            }
-            modal.classList.remove('hidden');
-        }
-
-        function closeAdminAuthModal() {
-            document.getElementById('admin-auth-modal').classList.add('hidden');
-        }
-
-        function verifyAdminPin() {
-            const pin = document.getElementById('admin-pin-input').value;
-            if (pin === DEFAULT_ADMIN_PIN) {
-                isAdminLoggedIn = true;
-                showToast('Akses Pentadbir Disahkan');
-                openAdminAuthModal();
-            } else {
-                showToast('PIN Pentadbir Salah!');
-            }
-        }
-
-        function applyAdminVerification() {
-            const status = document.getElementById('admin-status-select').value;
-            const reviewer = document.getElementById('admin-reviewer-name').value;
-            const comments = document.getElementById('admin-review-comments').value;
-
-            currentAdminVerification = {
-                status: status,
-                reviewerName: reviewer,
-                comments: comments,
-                verifiedAt: new Date().toISOString()
-            };
-
-            if (reviewer) {
-                document.getElementById('input-disemak-nama').value = reviewer;
-            }
-
-            updateAdminUIStatus();
-            saveReportToStorage();
-            closeAdminAuthModal();
-            showToast('Pengesahan Pentadbir Berjaya Disimpan!');
-        }
-
-        function updateAdminUIStatus() {
-            const badge = document.getElementById('admin-status-indicator');
-            const sigBox = document.getElementById('admin-signature-preview-box');
-
-            if (badge) {
-                badge.innerText = `Status: ${currentAdminVerification.status}`;
-                if (currentAdminVerification.status === 'TELAH DISEMAK & DISAHKAN') {
-                    badge.className = "text-[11px] px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold border border-emerald-300";
-                    if (sigBox) sigBox.classList.remove('hidden');
-                } else if (currentAdminVerification.status === 'PERLU REVISI') {
-                    badge.className = "text-[11px] px-2.5 py-0.5 rounded bg-red-100 text-red-800 font-bold border border-red-300";
-                    if (sigBox) sigBox.classList.add('hidden');
-                } else {
-                    badge.className = "text-[11px] px-2.5 py-0.5 rounded bg-amber-100 text-amber-800 font-bold border border-amber-300";
-                    if (sigBox) sigBox.classList.add('hidden');
-                }
-            }
-        }
-
-        function saveReportToStorage() {
-            const data = collectCurrentFormData();
-            localStorage.setItem('ssmp_report_draft', JSON.stringify(data));
-
-            let archive = getStoredReports();
-            const existingIdx = archive.findIndex(r => r.id === data.id);
-            if (existingIdx >= 0) {
-                archive[existingIdx] = data;
-            } else {
-                archive.unshift(data);
-            }
-            localStorage.setItem('ssmp_reports_archive', JSON.stringify(archive));
-
-            // Sync to Firebase Cloud if connected
-            if (isFirebaseConnected && firebaseDb) {
-                firebaseDb.ref('ssmp_reports/' + data.id).set(data).catch(err => {
-                    console.error("Cloud save failed:", err);
-                });
-            }
-
-            loadReportsFromStorage();
-            showToast('Laporan berjaya disimpan!');
-        }
-
-        function loadReportsFromStorage() {
-            const archiveList = document.getElementById('archive-list');
-            if (!archiveList) return;
-            const reports = getStoredReports();
-
-            if (reports.length === 0) {
-                archiveList.innerHTML = `<p class="text-xs text-zinc-500 italic p-3 text-center bg-zinc-50 rounded border border-zinc-200">Tiada rekod laporan tersimpan.</p>`;
-                return;
-            }
-
-            archiveList.innerHTML = '';
-            reports.forEach(report => {
-                const card = document.createElement('div');
-                card.className = "bg-zinc-50 border border-zinc-200 rounded p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 hover:bg-zinc-100/80 transition";
-                card.innerHTML = `
-                    <div>
-                        <div class="flex items-center space-x-2">
-                            <span class="font-bold text-xs text-zinc-900">${formatDateFormat(report.tarikh)} (${report.hari || 'HARI'})</span>
-                            <span class="text-[10px] bg-zinc-200 text-zinc-700 px-1.5 py-0.5 rounded">${report.tempohMula ? formatDateFormat(report.tempohMula) + ' - ' + formatDateFormat(report.tempohTamat) : 'Mingguan'}</span>
-                        </div>
-                        <p class="text-[11px] text-zinc-500 mt-0.5">Disediakan: ${report.disediakanNama || 'Belum dinamakan'}</p>
+        function addDutyRow(name = '', sigData = null) {
+            const container = document.getElementById('dutyRowsContainer');
+            const idx = container.children.length + 1;
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-slate-50 transition";
+            tr.innerHTML = `
+                <td class="p-2 text-center font-bold text-slate-500 row-index">${idx}</td>
+                <td class="p-2">
+                    <input type="text" list="staffList" class="duty-name-input w-full p-2 text-xs rounded border-slate-300 font-bold" placeholder="Taip nama guru / jurulatih..." value="${name}">
+                </td>
+                <td class="p-2 text-center">
+                    <div class="flex items-center justify-center space-x-2">
+                        <button type="button" onclick="openSigModal(${idx - 1})" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded shadow-sm">
+                            <i class="fa-solid fa-signature mr-1"></i>T/Tangan
+                        </button>
+                        <span id="sigBadge_${idx - 1}" class="${sigData ? 'text-emerald-600' : 'text-slate-400'} text-xs font-bold">
+                            ${sigData ? '<i class="fa-solid fa-check-circle"></i> Ada' : '<i class="fa-solid fa-circle-minus"></i> Tiada'}
+                        </span>
                     </div>
-                    <div class="flex items-center space-x-1.5 self-end sm:self-auto">
-                        <button onclick="loadReportFromArchive('${report.id}')" class="px-2 py-1 text-xs bg-white border border-zinc-300 hover:bg-zinc-200 rounded text-zinc-800">Buka</button>
-                        <button onclick="printReportFromArchive('${report.id}')" class="px-2 py-1 text-xs bg-zinc-800 hover:bg-zinc-700 text-white rounded">Cetak</button>
-                        <button onclick="deleteReportFromArchive('${report.id}')" class="px-2 py-1 text-xs border border-zinc-200 hover:bg-red-50 text-red-600 rounded"><i class="fa-solid fa-trash-can"></i></button>
-                    </div>
-                `;
-                archiveList.appendChild(card);
+                </td>
+                <td class="p-2 text-center">
+                    <button type="button" onclick="removeDutyRow(this)" class="p-1.5 text-red-600 hover:text-red-800 transition">
+                        <i class="fa-solid fa-trash-can text-sm"></i>
+                    </button>
+                </td>
+            `;
+            container.appendChild(tr);
+            if(sigData) dutySignaturesData[idx - 1] = sigData;
+            reindexDutyRows();
+        }
+
+        function removeDutyRow(btn) {
+            const tr = btn.closest('tr');
+            tr.remove();
+            reindexDutyRows();
+        }
+
+        function reindexDutyRows() {
+            const rows = document.querySelectorAll('#dutyRowsContainer tr');
+            rows.forEach((row, i) => {
+                row.querySelector('.row-index').innerText = i + 1;
             });
         }
 
-        function loadReportFromArchive(id) {
-            const reports = getStoredReports();
-            const report = reports.find(r => r.id === id);
-            if (report) {
-                populateFormFromData(report);
-                switchTab('form');
-                showToast('Rekod dibuka dalam borang');
+        // Section 2: Absent Staff Rows
+        function renderAbsentFormRows(count) {
+            const container = document.getElementById('absentRowsContainer');
+            container.innerHTML = '';
+            for(let i = 0; i < count; i++) {
+                addAbsentRow();
             }
         }
 
-        function printReportFromArchive(id) {
-            const reports = getStoredReports();
-            const report = reports.find(r => r.id === id);
-            if (report) {
-                populateFormFromData(report);
-                switchTab('preview');
+        function addAbsentRow(name = '', reason = '') {
+            const container = document.getElementById('absentRowsContainer');
+            const idx = container.children.length + 1;
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-slate-50 transition";
+            tr.innerHTML = `
+                <td class="p-2 text-center font-bold text-slate-500 row-absent-index">${idx}</td>
+                <td class="p-2">
+                    <input type="text" list="staffList" class="absent-name-input w-full p-2 text-xs rounded border-slate-300 font-bold" placeholder="Taip nama guru / jurulatih..." value="${name}">
+                </td>
+                <td class="p-2">
+                    <input type="text" class="absent-reason-input w-full p-2 text-xs rounded border-slate-300" placeholder="Alasan (cth: Cuti Sakit / Kursus / Mesyuarat)" value="${reason}">
+                </td>
+                <td class="p-2 text-center">
+                    <button type="button" onclick="removeAbsentRow(this)" class="p-1.5 text-red-600 hover:text-red-800 transition">
+                        <i class="fa-solid fa-trash-can text-sm"></i>
+                    </button>
+                </td>
+            `;
+            container.appendChild(tr);
+            reindexAbsentRows();
+        }
+
+        function removeAbsentRow(btn) {
+            btn.closest('tr').remove();
+            reindexAbsentRows();
+        }
+
+        function reindexAbsentRows() {
+            document.querySelectorAll('#absentRowsContainer tr').forEach((row, i) => {
+                row.querySelector('.row-absent-index').innerText = i + 1;
+            });
+        }
+
+        // Section 3: Dynamic Speech Rows
+        function renderSpeechFormRows(count) {
+            const container = document.getElementById('speechContainer');
+            container.innerHTML = '';
+            for(let i = 0; i < count; i++) {
+                addSpeechRow();
             }
         }
 
-        function deleteReportFromArchive(id) {
-            let archive = getStoredReports();
-            archive = archive.filter(r => r.id !== id);
-            localStorage.setItem('ssmp_reports_archive', JSON.stringify(archive));
-            loadReportsFromStorage();
-            showToast('Rekod dipadam');
-        }
-
-        function addUcapanCard(nama = '', catatan = '') {
-            const ucapanId = 'ucapan_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
-            const container = document.getElementById('ucapan-container');
-
-            const item = document.createElement('div');
-            item.id = ucapanId;
-            item.className = "bg-zinc-50 border border-zinc-200 rounded p-3 space-y-2 relative";
-            item.innerHTML = `
-                <div class="flex items-center justify-between gap-2">
-                    <div class="w-full sm:w-1/2">
-                        <label class="block text-[10px] font-bold text-zinc-500 uppercase mb-0.5">Nama Penyampai / Penceramah:</label>
-                        <input type="text" id="${ucapanId}_nama" value="${nama}" list="staff-list" class="w-full p-1.5 text-xs bg-white border border-zinc-300 rounded focus:border-zinc-800" placeholder="Pilih / taip nama penceramah">
-                    </div>
-                    <button onclick="removeUcapanCard('${ucapanId}')" class="text-zinc-400 hover:text-red-600 text-xs p-1" title="Padam Rekod Ini">
-                        <i class="fa-solid fa-trash-can"></i>
+        function addSpeechRow(speaker = '', text = '') {
+            const container = document.getElementById('speechContainer');
+            const idx = container.children.length + 1;
+            const card = document.createElement('div');
+            card.className = "speech-card border border-slate-200 p-3 rounded-lg bg-slate-50 space-y-2 relative";
+            card.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <span class="text-xs font-bold text-blue-900"><i class="fa-solid fa-user-tie mr-1"></i>Penyampai #${idx}</span>
+                    <button type="button" onclick="this.closest('.speech-card').remove()" class="text-red-600 hover:text-red-800 text-xs font-bold">
+                        <i class="fa-solid fa-trash mr-1"></i>Padam
                     </button>
                 </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-zinc-500 uppercase mb-0.5">Ringkasan / Catatan Ucapan / Pengumuman:</label>
-                    <textarea id="${ucapanId}_catatan" rows="2" class="w-full p-1.5 text-xs bg-white border border-zinc-300 rounded focus:border-zinc-800" placeholder="Ringkasan ucapan, pengumuman, atau pesanan...">${catatan}</textarea>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <div>
+                        <input type="text" list="staffList" class="speech-speaker w-full p-2 text-xs font-bold rounded border-slate-300" placeholder="Nama Penyampai / Penceramah" value="${speaker}">
+                    </div>
+                    <div class="md:col-span-2">
+                        <textarea rows="2" class="speech-text w-full p-2 text-xs rounded border-slate-300" placeholder="Ringkasan ucapan, pengumuman atau taklimat...">${text}</textarea>
+                    </div>
                 </div>
             `;
-            container.appendChild(item);
-            ucapanList.push({ id: ucapanId });
+            container.appendChild(card);
         }
 
-        function removeUcapanCard(ucapanId) {
-            const card = document.getElementById(ucapanId);
-            if (card) card.remove();
-            ucapanList = ucapanList.filter(u => u.id !== ucapanId);
-            if (ucapanList.length === 0) {
-                addUcapanCard();
-            }
-        }
-
-        function renderAbsentFormRows() {
-            const tbody = document.getElementById('tbody-tidak-hadir');
-            if (!tbody) return;
+        // Section 4: Evaluation Matrix Table
+        function renderEvalTable() {
+            const tbody = document.getElementById('evalTableBody');
             tbody.innerHTML = '';
-
-            absentList.forEach((item, index) => {
+            
+            EVAL_LOCATIONS.forEach((loc, idx) => {
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-zinc-50 transition";
+                tr.className = "hover:bg-slate-50 transition border-b border-slate-200";
+                
+                let optionsHTML = EVAL_OPTIONS.map(opt => `<option value="${opt}">${opt}</option>`).join('');
+
                 tr.innerHTML = `
-                    <td class="p-2 text-center font-bold text-zinc-400">${index + 1}.</td>
-                    <td class="p-2">
-                        <input type="text" value="${item.name || ''}" oninput="updateAbsentName('${item.id}', this.value)" list="staff-list" class="w-full p-1.5 text-xs bg-white border border-zinc-300 rounded focus:border-zinc-800" placeholder="Nama staf tidak hadir">
-                    </td>
-                    <td class="p-2">
-                        <input type="text" value="${item.catatan || ''}" oninput="updateAbsentCatatan('${item.id}', this.value)" class="w-full p-1.5 text-xs bg-white border border-zinc-300 rounded focus:border-zinc-800" placeholder="Sebab (Cuti / Kursus / MC / dll)">
+                    <td class="p-3 font-bold text-slate-800 text-xs">${loc}</td>
+                    <td class="p-2 text-center">
+                        <select class="eval-kebersihan w-full p-2 text-xs font-bold rounded border-slate-300">
+                            ${optionsHTML}
+                        </select>
                     </td>
                     <td class="p-2 text-center">
-                        <button type="button" onclick="removeAbsentRow('${item.id}')" class="text-zinc-400 hover:text-red-600 text-xs p-1" title="Padam Baris">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
+                        <select class="eval-keceriaan w-full p-2 text-xs font-bold rounded border-slate-300">
+                            ${optionsHTML}
+                        </select>
+                    </td>
+                    <td class="p-2 text-center">
+                        <select class="eval-keselamatan w-full p-2 text-xs font-bold rounded border-slate-300">
+                            ${optionsHTML}
+                        </select>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        function updateAbsentName(id, val) {
-            const item = absentList.find(a => a.id === id);
-            if (item) item.name = val;
-        }
-
-        function updateAbsentCatatan(id, val) {
-            const item = absentList.find(a => a.id === id);
-            if (item) item.catatan = val;
-        }
-
-        function addAbsentGuruRow(name = '', catatan = '') {
-            const newId = 'absent_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
-            absentList.push({ id: newId, name: name, catatan: catatan });
-            renderAbsentFormRows();
-        }
-
-        function removeAbsentRow(id) {
-            if (absentList.length <= 1) {
-                showToast('Sekurang-kurangnya 1 baris perlu kekal');
-                absentList[0].name = '';
-                absentList[0].catatan = '';
-                renderAbsentFormRows();
-                return;
-            }
-            absentList = absentList.filter(a => a.id !== id);
-            renderAbsentFormRows();
-            showToast('Baris dipadam');
-        }
-
-        let canvas, ctx, isDrawing = false;
-
-        function setupSigCanvas() {
-            canvas = document.getElementById('sig-pad');
-            ctx = canvas.getContext('2d');
-            ctx.lineWidth = 2;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = '#18181b';
-
-            canvas.addEventListener('mousedown', startDrawing);
-            canvas.addEventListener('mousemove', draw);
-            canvas.addEventListener('mouseup', stopDrawing);
-            canvas.addEventListener('mouseleave', stopDrawing);
-
-            canvas.addEventListener('touchstart', (e) => {
-                const touch = e.touches[0];
-                const rect = canvas.getBoundingClientRect();
-                isDrawing = true;
-                ctx.beginPath();
-                ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
-                e.preventDefault();
+        // Section 6: Photo Upload
+        function handlePhotoUpload(e) {
+            const files = Array.from(e.target.files).slice(0, 4);
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    if(uploadedImages.length < 4) {
+                        uploadedImages.push(event.target.result);
+                        renderPhotoPreviews();
+                    }
+                };
+                reader.readAsDataURL(file);
             });
-            canvas.addEventListener('touchmove', (e) => {
-                if (!isDrawing) return;
-                const touch = e.touches[0];
-                const rect = canvas.getBoundingClientRect();
-                ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
-                ctx.stroke();
-                e.preventDefault();
+        }
+
+        function renderPhotoPreviews() {
+            const grid = document.getElementById('photoPreviewGrid');
+            grid.innerHTML = '';
+            uploadedImages.forEach((imgSrc, idx) => {
+                const div = document.createElement('div');
+                div.className = "relative group rounded-lg overflow-hidden border border-slate-300 bg-slate-100 shadow-sm";
+                div.innerHTML = `
+                    <img src="${imgSrc}" class="w-full h-28 object-cover">
+                    <button type="button" onclick="removePhoto(${idx})" class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow opacity-90 hover:opacity-100">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                `;
+                grid.appendChild(div);
             });
-            canvas.addEventListener('touchend', stopDrawing);
         }
 
-        function startDrawing(e) {
-            isDrawing = true;
-            ctx.beginPath();
-            ctx.moveTo(e.offsetX, e.offsetY);
+        function removePhoto(index) {
+            uploadedImages.splice(index, 1);
+            renderPhotoPreviews();
         }
 
-        function draw(e) {
-            if (!isDrawing) return;
-            ctx.lineTo(e.offsetX, e.offsetY);
-            ctx.stroke();
+        // Digital Signature Modal
+        function initSignaturePad() {
+            const canvas = document.getElementById('sigCanvas');
+            signaturePadInstance = new SignaturePad(canvas, {
+                backgroundColor: 'rgb(255, 255, 255)',
+                penColor: 'rgb(15, 23, 42)'
+            });
         }
 
-        function stopDrawing() {
-            isDrawing = false;
-        }
-
-        function clearSigPad() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        function openSigModal(rowIndex) {
+            currentActiveDutyRowIndex = rowIndex;
+            document.getElementById('sigModal').classList.remove('hidden');
+            signaturePadInstance.clear();
         }
 
         function closeSigModal() {
-            document.getElementById('sig-modal').classList.add('hidden');
-            currentSigIndex = null;
+            document.getElementById('sigModal').classList.add('hidden');
         }
 
-        function addPhotoCard(imgSrc = '', caption = '') {
-            const photoId = 'photo_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
-            const grid = document.getElementById('photo-grid');
-
-            const card = document.createElement('div');
-            card.id = photoId;
-            card.className = "bg-zinc-50 border border-zinc-200 rounded p-2.5 space-y-2 relative group";
-            card.innerHTML = `
-                <button onclick="removePhotoCard('${photoId}')" class="absolute top-2 right-2 bg-zinc-800 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] opacity-80 hover:opacity-100 transition z-10" title="Padam Gambar">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-                <div class="h-36 bg-zinc-200 rounded overflow-hidden flex items-center justify-center relative border border-zinc-300">
-                    <img id="${photoId}_img" src="${imgSrc}" class="${imgSrc ? '' : 'hidden'} w-full h-full object-cover">
-                    <div id="${photoId}_placeholder" class="${imgSrc ? 'hidden' : 'flex'} flex-col items-center justify-center text-zinc-400">
-                        <i class="fa-solid fa-image text-2xl mb-1"></i>
-                        <span class="text-[11px]">Muat naik gambar</span>
-                        <input type="file" accept="image/*" onchange="handleImageUpload(event, '${photoId}')" class="absolute inset-0 opacity-0 cursor-pointer">
-                    </div>
-                </div>
-                <div>
-                    <input type="text" id="${photoId}_caption" value="${caption}" class="w-full p-1.5 text-xs bg-white border border-zinc-300 rounded focus:border-zinc-800" placeholder="Keterangan gambar...">
-                </div>
-            `;
-            grid.appendChild(card);
-            
-            photoList.push({ id: photoId, imageBase64: imgSrc, caption: caption });
+        function clearSigPad() {
+            signaturePadInstance.clear();
         }
 
-        function handleImageUpload(e, photoId) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                const base64 = evt.target.result;
-                document.getElementById(`${photoId}_img`).src = base64;
-                document.getElementById(`${photoId}_img`).classList.remove('hidden');
-                document.getElementById(`${photoId}_placeholder`).classList.add('hidden');
-
-                const item = photoList.find(p => p.id === photoId);
-                if (item) item.imageBase64 = base64;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function removePhotoCard(photoId) {
-            const card = document.getElementById(photoId);
-            if (card) card.remove();
-            photoList = photoList.filter(p => p.id !== photoId);
-        }
-
-        function switchTab(tab) {
-            const views = ['form', 'preview', 'archive'];
-            views.forEach(v => {
-                const viewEl = document.getElementById(`view-${v}`);
-                const tabEl = document.getElementById(`tab-${v}`);
-                const mobTabEl = document.getElementById(`mob-tab-${v}`);
-
-                if (v === tab) {
-                    if (viewEl) viewEl.classList.remove('hidden');
-                    if (tabEl) {
-                        tabEl.className = "px-3 py-1.5 text-xs font-medium rounded transition bg-zinc-100 text-zinc-900 font-bold";
-                    }
-                    if (mobTabEl) {
-                        mobTabEl.className = "py-1 px-2 text-zinc-100 font-bold";
-                    }
-                } else {
-                    if (viewEl) viewEl.classList.add('hidden');
-                    if (tabEl) {
-                        tabEl.className = "px-3 py-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 rounded transition";
-                    }
-                    if (mobTabEl) {
-                        mobTabEl.className = "py-1 px-2 text-zinc-400";
-                    }
-                }
-            });
-
-            if (tab === 'preview') {
-                updatePrintPreview();
+        function saveSigPad() {
+            if(signaturePadInstance.isEmpty()) {
+                alert('Sila buat tandatangan terlebih dahulu.');
+                return;
             }
+            const sigData = signaturePadInstance.toDataURL();
+            dutySignaturesData[currentActiveDutyRowIndex] = sigData;
+            
+            const badge = document.getElementById(`sigBadge_${currentActiveDutyRowIndex}`);
+            if(badge) {
+                badge.className = "text-emerald-600 text-xs font-bold";
+                badge.innerHTML = '<i class="fa-solid fa-check-circle"></i> Ada';
+            }
+            closeSigModal();
         }
 
+        // Generate Print Preview
         function updatePrintPreview() {
-            const tempohMula = formatDateFormat(document.getElementById('input-tempoh-mula').value);
-            const tempohTamat = formatDateFormat(document.getElementById('input-tempoh-tamat').value);
-            document.getElementById('print-tempoh-bertugas').innerText = `${tempohMula} - ${tempohTamat}`;
-            
-            const tarikhVal = formatDateFormat(document.getElementById('input-tarikh').value);
-            const hariVal = document.getElementById('input-hari').value;
-            
-            document.getElementById('print-tarikh').innerText = tarikhVal;
-            document.getElementById('print-hari').innerText = hariVal;
-            document.getElementById('print-catatan-tarikh').innerText = tarikhVal;
-            document.getElementById('print-catatan-hari').innerText = hariVal;
+            // Tempoh & Tarikh
+            const mula = document.getElementById('mulaMinggu').value;
+            const tamat = document.getElementById('tamatMinggu').value;
+            document.getElementById('pvTempoh').innerText = `${formatDateStr(mula)} - ${formatDateStr(tamat)}`;
+            document.getElementById('pvTarikh').innerText = formatDateStr(document.getElementById('tarikhLaporan').value);
+            document.getElementById('pvHari').innerText = document.getElementById('hariLaporan').value;
 
-            // Update Admin Verification Stamp in Print
-            const printAdminTag = document.getElementById('print-admin-status-tag');
-            if (printAdminTag) {
-                printAdminTag.innerText = `STATUS: ${currentAdminVerification.status}`;
-                if (currentAdminVerification.status === 'TELAH DISEMAK & DISAHKAN') {
-                    printAdminTag.className = "text-[10px] px-2 py-0.5 bg-emerald-100 border border-emerald-500 font-bold uppercase text-emerald-900 mb-1";
-                } else if (currentAdminVerification.status === 'PERLU REVISI') {
-                    printAdminTag.className = "text-[10px] px-2 py-0.5 bg-red-100 border border-red-500 font-bold uppercase text-red-900 mb-1";
-                } else {
-                    printAdminTag.className = "text-[10px] px-2 py-0.5 bg-amber-100 border border-amber-400 font-bold uppercase text-amber-900 mb-1";
-                }
-            }
-
-            // Duty Table - Only render filled/valid rows to prevent empty entries
-            const validDutyList = dutyList.filter(d => d.name && d.name.trim() !== '');
-            const printDutyTbody = document.getElementById('print-tbody-bertugas');
-            printDutyTbody.innerHTML = '';
-            let firstDutyGuruName = '';
-
-            if (validDutyList.length === 0) {
-                const tr = document.createElement('tr');
-                tr.className = "border-b border-black";
-                tr.innerHTML = `
-                    <td class="p-1 text-center font-bold border-r border-black">1.</td>
-                    <td class="p-1 border-r border-black font-medium">-</td>
-                    <td class="p-0.5 text-center align-middle"></td>
-                `;
-                printDutyTbody.appendChild(tr);
-            } else {
-                validDutyList.forEach((item, idx) => {
-                    if (idx === 0) firstDutyGuruName = item.name;
-                    const sigImg = item.sig ? `<img src="${item.sig}" class="h-6 max-w-[100px] mx-auto object-contain">` : '';
-
-                    const tr = document.createElement('tr');
-                    tr.className = "border-b border-black";
-                    tr.innerHTML = `
-                        <td class="p-1 text-center font-bold border-r border-black">${idx + 1}.</td>
-                        <td class="p-1 border-r border-black font-medium">${item.name}</td>
-                        <td class="p-0.5 text-center align-middle">${sigImg}</td>
+            // Duty Table
+            const pvDutyBody = document.getElementById('pvDutyBody');
+            pvDutyBody.innerHTML = '';
+            const dutyNames = document.querySelectorAll('.duty-name-input');
+            let dutyCount = 1;
+            dutyNames.forEach((inp, idx) => {
+                if(inp.value.trim() !== '') {
+                    const sig = dutySignaturesData[idx] ? `<img src="${dutySignaturesData[idx]}" class="h-6 mx-auto">` : '<span class="text-slate-400 italic">Tiada</span>';
+                    pvDutyBody.innerHTML += `
+                        <tr>
+                            <td class="text-center">${dutyCount++}</td>
+                            <td>${inp.value}</td>
+                            <td class="text-center">${sig}</td>
+                        </tr>
                     `;
-                    printDutyTbody.appendChild(tr);
-                });
-            }
-
-            document.getElementById('print-catatan-namaguru').innerText = firstDutyGuruName || document.getElementById('input-disediakan-nama').value || '-';
-
-            // Absent Table - Only render filled rows
-            const validAbsentRows = absentList.filter(a => (a.name && a.name.trim()) || (a.catatan && a.catatan.trim()));
-
-            const printAbsentTbody = document.getElementById('print-tbody-tidak-hadir');
-            printAbsentTbody.innerHTML = '';
-
-            if (validAbsentRows.length === 0) {
-                const tr = document.createElement('tr');
-                tr.className = "border-b border-black";
-                tr.innerHTML = `
-                    <td class="p-1 text-center font-bold border-r border-black">1.</td>
-                    <td class="p-1 border-r border-black font-medium">SEMUA HADIR</td>
-                    <td class="p-1 font-normal">-</td>
-                `;
-                printAbsentTbody.appendChild(tr);
-            } else {
-                validAbsentRows.forEach((item, idx) => {
-                    const tr = document.createElement('tr');
-                    tr.className = "border-b border-black";
-                    tr.innerHTML = `
-                        <td class="p-1 text-center font-bold border-r border-black">${idx + 1}.</td>
-                        <td class="p-1 border-r border-black font-medium">${item.name || '&nbsp;'}</td>
-                        <td class="p-1 font-normal">${item.catatan || '-'}</td>
-                    `;
-                    printAbsentTbody.appendChild(tr);
-                });
-            }
-
-            // Dynamic Ucapan Rendering in Print
-            const printUcapanContainer = document.getElementById('print-perhimpunan-container');
-            printUcapanContainer.innerHTML = '';
-            
-            let ucapanItemsToPrint = [];
-            ucapanList.forEach(u => {
-                const namaVal = document.getElementById(`${u.id}_nama`) ? document.getElementById(`${u.id}_nama`).value.trim() : '';
-                const catVal = document.getElementById(`${u.id}_catatan`) ? document.getElementById(`${u.id}_catatan`).value.trim() : '';
-                if (namaVal || catVal) {
-                    ucapanItemsToPrint.push({ nama: namaVal, catatan: catVal });
                 }
             });
 
-            if (ucapanItemsToPrint.length === 0) {
-                printUcapanContainer.innerHTML = `<p class="text-xs italic text-zinc-500 p-1">- Tiada Catatan -</p>`;
-            } else {
-                ucapanItemsToPrint.forEach((u, idx) => {
-                    const row = document.createElement('div');
-                    row.className = "text-xs border-b border-zinc-300 pb-1 last:border-none last:pb-0";
-                    row.innerHTML = `
-                        <p class="font-bold uppercase text-[11px] text-zinc-900">${idx + 1}. ${u.nama ? u.nama : 'Penyampai / Pengumuman'}:</p>
-                        <p class="whitespace-pre-wrap pl-3 font-normal text-zinc-800">${u.catatan || '-'}</p>
+            // Absent Table
+            const pvAbsentBody = document.getElementById('pvAbsentBody');
+            pvAbsentBody.innerHTML = '';
+            const absentNames = document.querySelectorAll('.absent-name-input');
+            const absentReasons = document.querySelectorAll('.absent-reason-input');
+            let absentCount = 1;
+            absentNames.forEach((inp, idx) => {
+                if(inp.value.trim() !== '') {
+                    pvAbsentBody.innerHTML += `
+                        <tr>
+                            <td class="text-center">${absentCount++}</td>
+                            <td>${inp.value}</td>
+                            <td>${absentReasons[idx].value || '-'}</td>
+                        </tr>
                     `;
-                    printUcapanContainer.appendChild(row);
-                });
-            }
-
-            // Evaluations
-            document.getElementById('print-e-kawasan-keb').innerText = document.getElementById('eval-kawasan-kebersihan').value;
-            document.getElementById('print-e-kawasan-kec').innerText = document.getElementById('eval-kawasan-keceriaan').value;
-            document.getElementById('print-e-kawasan-kes').innerText = document.getElementById('eval-kawasan-keselamatan').value;
-
-            document.getElementById('print-e-bangunan-keb').innerText = document.getElementById('eval-bangunan-kebersihan').value;
-            document.getElementById('print-e-bangunan-kec').innerText = document.getElementById('eval-bangunan-keceriaan').value;
-            document.getElementById('print-e-bangunan-kes').innerText = document.getElementById('eval-bangunan-keselamatan').value;
-
-            document.getElementById('print-e-tandas-keb').innerText = document.getElementById('eval-tandas-kebersihan').value;
-            document.getElementById('print-e-tandas-kec').innerText = document.getElementById('eval-tandas-keceriaan').value;
-            document.getElementById('print-e-tandas-kes').innerText = document.getElementById('eval-tandas-keselamatan').value;
-
-            document.getElementById('print-e-kantin-keb').innerText = document.getElementById('eval-kantin-kebersihan').value;
-            document.getElementById('print-e-kantin-kec').innerText = document.getElementById('eval-kantin-keceriaan').value;
-            document.getElementById('print-e-kantin-kes').innerText = document.getElementById('eval-kantin-keselamatan').value;
-
-            document.getElementById('print-e-dewan-keb').innerText = document.getElementById('eval-dewan-kebersihan').value;
-            document.getElementById('print-e-dewan-kec').innerText = document.getElementById('eval-dewan-keceriaan').value;
-            document.getElementById('print-e-dewan-kes').innerText = document.getElementById('eval-dewan-keselamatan').value;
-
-            document.getElementById('print-program-text').innerText = document.getElementById('input-program').value || '- Tiada Catatan -';
-
-            // Verification
-            document.getElementById('print-dis-nama').innerText = document.getElementById('input-disediakan-nama').value || '....................................................';
-            document.getElementById('print-dis-jawatan').innerText = document.getElementById('input-disediakan-jawatan').value || 'Guru Bertugas Mingguan';
-
-            document.getElementById('print-sem-nama').innerText = document.getElementById('input-disemak-nama').value || '....................................................';
-            document.getElementById('print-sem-jawatan').innerText = document.getElementById('input-disemak-jawatan').value || 'GPK HEM / Pentadbir';
-
-            // Photo Grid Print
-            const printPhotoGrid = document.getElementById('print-photo-grid');
-            printPhotoGrid.innerHTML = '';
-            
-            photoList.forEach(p => {
-                const capInput = document.getElementById(`${p.id}_caption`);
-                if (capInput) p.caption = capInput.value;
+                }
             });
 
-            const validPhotos = photoList.filter(p => p.imageBase64);
-            if (validPhotos.length === 0) {
-                document.getElementById('print-photo-section').classList.add('hidden');
-            } else {
-                document.getElementById('print-photo-section').classList.remove('hidden');
-                validPhotos.forEach(p => {
-                    const item = document.createElement('div');
-                    item.className = "border border-black p-1.5 rounded text-center space-y-1 bg-white";
-                    item.innerHTML = `
-                        <img src="${p.imageBase64}" class="w-full h-36 object-cover border border-zinc-300 rounded">
-                        <p class="text-[10px] font-medium pt-0.5">${p.caption || 'Laporan Bergambar'}</p>
+            // Speech Cards
+            const pvSpeechContent = document.getElementById('pvSpeechContent');
+            pvSpeechContent.innerHTML = '';
+            const speakers = document.querySelectorAll('.speech-speaker');
+            const speechTexts = document.querySelectorAll('.speech-text');
+            speakers.forEach((spk, idx) => {
+                if(spk.value.trim() !== '' || speechTexts[idx].value.trim() !== '') {
+                    pvSpeechContent.innerHTML += `
+                        <div class="border-b pb-1 last:border-none">
+                            <strong>${spk.value || 'Penyampai'}:</strong> ${speechTexts[idx].value}
+                        </div>
                     `;
-                    printPhotoGrid.appendChild(item);
-                });
-            }
+                }
+            });
+
+            // Evaluation Table
+            const pvEvalBody = document.getElementById('pvEvalBody');
+            pvEvalBody.innerHTML = '';
+            const evalRows = document.querySelectorAll('#evalTableBody tr');
+            evalRows.forEach((row, idx) => {
+                const locName = EVAL_LOCATIONS[idx];
+                const keb = row.querySelector('.eval-kebersihan').value;
+                const kec = row.querySelector('.eval-keceriaan').value;
+                const kes = row.querySelector('.eval-keselamatan').value;
+
+                pvEvalBody.innerHTML += `
+                    <tr>
+                        <td class="text-left font-bold">${locName}</td>
+                        <td>${keb}</td>
+                        <td>${kec}</td>
+                        <td>${kes}</td>
+                    </tr>
+                `;
+            });
+
+            // Program & Aktiviti
+            document.getElementById('pvProgram').innerText = document.getElementById('programAktiviti').value || 'Tiada catatan program.';
+
+            // Photo Grid
+            const pvPhotoGrid = document.getElementById('pvPhotoGrid');
+            pvPhotoGrid.innerHTML = '';
+            uploadedImages.forEach(img => {
+                pvPhotoGrid.innerHTML += `<img src="${img}" class="w-full h-32 object-cover border border-black rounded">`;
+            });
+
+            // Footer Names
+            document.getElementById('pvDisediakanNama').innerText = document.getElementById('disediakanOleh').value || '( GURU BERTUGAS )';
+            document.getElementById('pvDisemakNama').innerText = document.getElementById('disemakOleh').value || '( PENTADBIR SSMP )';
         }
 
-        function collectCurrentFormData() {
-            photoList.forEach(p => {
-                const capInput = document.getElementById(`${p.id}_caption`);
-                if (capInput) p.caption = capInput.value;
+        function formatDateStr(dStr) {
+            if(!dStr) return '';
+            const parts = dStr.split('-');
+            if(parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            return dStr;
+        }
+
+        // Storage & Record Archive
+        function getFormDataPayload() {
+            const dutyList = [];
+            document.querySelectorAll('.duty-name-input').forEach((inp, idx) => {
+                if(inp.value.trim() !== '') {
+                    dutyList.push({ name: inp.value, sig: dutySignaturesData[idx] || null });
+                }
             });
 
-            const absentArr = absentList.map(a => ({
-                id: a.id,
-                name: a.name || '',
-                catatan: a.catatan || ''
-            }));
+            const absentList = [];
+            const absentNames = document.querySelectorAll('.absent-name-input');
+            const absentReasons = document.querySelectorAll('.absent-reason-input');
+            absentNames.forEach((inp, idx) => {
+                if(inp.value.trim() !== '') {
+                    absentList.push({ name: inp.value, reason: absentReasons[idx].value });
+                }
+            });
 
-            const ucapanData = ucapanList.map(u => ({
-                nama: document.getElementById(`${u.id}_nama`) ? document.getElementById(`${u.id}_nama`).value : '',
-                catatan: document.getElementById(`${u.id}_catatan`) ? document.getElementById(`${u.id}_catatan`).value : ''
-            }));
+            const speechList = [];
+            const speakers = document.querySelectorAll('.speech-speaker');
+            const speechTexts = document.querySelectorAll('.speech-text');
+            speakers.forEach((spk, idx) => {
+                if(spk.value.trim() !== '' || speechTexts[idx].value.trim() !== '') {
+                    speechList.push({ speaker: spk.value, text: speechTexts[idx].value });
+                }
+            });
+
+            const evalList = [];
+            document.querySelectorAll('#evalTableBody tr').forEach((row, idx) => {
+                evalList.push({
+                    location: EVAL_LOCATIONS[idx],
+                    kebersihan: row.querySelector('.eval-kebersihan').value,
+                    keceriaan: row.querySelector('.eval-keceriaan').value,
+                    keselamatan: row.querySelector('.eval-keselamatan').value
+                });
+            });
 
             return {
-                id: 'report_' + (document.getElementById('input-tarikh').value || Date.now()),
-                savedAt: new Date().toISOString(),
-                tempohMula: document.getElementById('input-tempoh-mula').value,
-                tempohTamat: document.getElementById('input-tempoh-tamat').value,
-                tarikh: document.getElementById('input-tarikh').value,
-                hari: document.getElementById('input-hari').value,
-                guruBertugas: dutyList.map(d => ({ id: d.id, name: d.name, sig: d.sig })),
-                guruAbsent: absentArr,
-                ucapanList: ucapanData,
-                evaluations: {
-                    kawasan: {
-                        keb: document.getElementById('eval-kawasan-kebersihan').value,
-                        kec: document.getElementById('eval-kawasan-keceriaan').value,
-                        kes: document.getElementById('eval-kawasan-keselamatan').value,
-                    },
-                    bangunan: {
-                        keb: document.getElementById('eval-bangunan-kebersihan').value,
-                        kec: document.getElementById('eval-bangunan-keceriaan').value,
-                        kes: document.getElementById('eval-bangunan-keselamatan').value,
-                    },
-                    tandas: {
-                        keb: document.getElementById('eval-tandas-kebersihan').value,
-                        kec: document.getElementById('eval-tandas-keceriaan').value,
-                        kes: document.getElementById('eval-tandas-keselamatan').value,
-                    },
-                    kantin: {
-                        keb: document.getElementById('eval-kantin-kebersihan').value,
-                        kec: document.getElementById('eval-kantin-keceriaan').value,
-                        kes: document.getElementById('eval-kantin-keselamatan').value,
-                    },
-                    dewan: {
-                        keb: document.getElementById('eval-dewan-kebersihan').value,
-                        kec: document.getElementById('eval-dewan-keceriaan').value,
-                        kes: document.getElementById('eval-dewan-keselamatan').value,
-                    }
-                },
-                program: document.getElementById('input-program').value,
-                disediakanNama: document.getElementById('input-disediakan-nama').value,
-                disediakanJawatan: document.getElementById('input-disediakan-jawatan').value,
-                disemakNama: document.getElementById('input-disemak-nama').value,
-                disemakJawatan: document.getElementById('input-disemak-jawatan').value,
-                adminVerification: currentAdminVerification,
-                photos: photoList
+                id: Date.now(),
+                mulaMinggu: document.getElementById('mulaMinggu').value,
+                tamatMinggu: document.getElementById('tamatMinggu').value,
+                tarikhLaporan: document.getElementById('tarikhLaporan').value,
+                hariLaporan: document.getElementById('hariLaporan').value,
+                dutyList,
+                absentList,
+                speechList,
+                evalList,
+                programAktiviti: document.getElementById('programAktiviti').value,
+                photos: uploadedImages,
+                disediakanOleh: document.getElementById('disediakanOleh').value,
+                disemakOleh: document.getElementById('disemakOleh').value,
+                status: 'DIHANTAR'
             };
         }
 
-        function populateFormFromData(data) {
-            document.getElementById('input-tempoh-mula').value = data.tempohMula || '';
-            document.getElementById('input-tempoh-tamat').value = data.tempohTamat || '';
-            document.getElementById('input-tarikh').value = data.tarikh || '';
-            document.getElementById('input-hari').value = data.hari || 'ISNIN';
-
-            if (data.adminVerification) {
-                currentAdminVerification = data.adminVerification;
-            } else {
-                currentAdminVerification = { status: "BELUM DISEMAK", reviewerName: "", comments: "", verifiedAt: null };
-            }
-            updateAdminUIStatus();
-
-            dutyList = [];
-            if (data.guruBertugas && Array.isArray(data.guruBertugas) && data.guruBertugas.length > 0) {
-                data.guruBertugas.forEach((item, i) => {
-                    dutyList.push({
-                        id: item.id || ('duty_' + Date.now() + '_' + i),
-                        name: item.name || '',
-                        sig: item.sig || null
-                    });
-                });
-            } else {
-                initDefaultDutyList();
-            }
-            renderDutyFormRows();
-
-            absentList = [];
-            if (data.guruAbsent && Array.isArray(data.guruAbsent) && data.guruAbsent.length > 0) {
-                data.guruAbsent.forEach((item, i) => {
-                    absentList.push({
-                        id: item.id || ('absent_' + Date.now() + '_' + i),
-                        name: item.name || '',
-                        catatan: item.catatan || ''
-                    });
-                });
-            } else {
-                initDefaultAbsentList();
-            }
-            renderAbsentFormRows();
-
-            // Restore ucapan entries (or backward compatibility fallback)
-            document.getElementById('ucapan-container').innerHTML = '';
-            ucapanList = [];
-            if (data.ucapanList && data.ucapanList.length > 0) {
-                data.ucapanList.forEach(u => {
-                    addUcapanCard(u.nama, u.catatan);
-                });
-            } else if (data.perhimpunan) {
-                addUcapanCard('', data.perhimpunan);
-            } else {
-                addUcapanCard();
-            }
-
-            if (data.evaluations) {
-                if (data.evaluations.kawasan) {
-                    document.getElementById('eval-kawasan-kebersihan').value = data.evaluations.kawasan.keb;
-                    document.getElementById('eval-kawasan-keceriaan').value = data.evaluations.kawasan.kec;
-                    document.getElementById('eval-kawasan-keselamatan').value = data.evaluations.kawasan.kes;
-                }
-                if (data.evaluations.bangunan) {
-                    document.getElementById('eval-bangunan-kebersihan').value = data.evaluations.bangunan.keb;
-                    document.getElementById('eval-bangunan-keceriaan').value = data.evaluations.bangunan.kec;
-                    document.getElementById('eval-bangunan-keselamatan').value = data.evaluations.bangunan.kes;
-                }
-                if (data.evaluations.tandas) {
-                    document.getElementById('eval-tandas-kebersihan').value = data.evaluations.tandas.keb;
-                    document.getElementById('eval-tandas-keceriaan').value = data.evaluations.tandas.kec;
-                    document.getElementById('eval-tandas-keselamatan').value = data.evaluations.tandas.kes;
-                }
-                if (data.evaluations.kantin) {
-                    document.getElementById('eval-kantin-kebersihan').value = data.evaluations.kantin.keb;
-                    document.getElementById('eval-kantin-keceriaan').value = data.evaluations.kantin.kec;
-                    document.getElementById('eval-kantin-keselamatan').value = data.evaluations.kantin.kes;
-                }
-                if (data.evaluations.dewan) {
-                    document.getElementById('eval-dewan-kebersihan').value = data.evaluations.dewan.keb;
-                    document.getElementById('eval-dewan-keceriaan').value = data.evaluations.dewan.kec;
-                    document.getElementById('eval-dewan-keselamatan').value = data.evaluations.dewan.kes;
-                }
-            }
-
-            document.getElementById('input-program').value = data.program || '';
-            document.getElementById('input-disediakan-nama').value = data.disediakanNama || '';
-            document.getElementById('input-disediakan-jawatan').value = data.disediakanJawatan || 'Guru Bertugas Mingguan';
-            document.getElementById('input-disemak-nama').value = data.disemakNama || '';
-            document.getElementById('input-disemak-jawatan').value = data.disemakJawatan || 'GPK HEM / Pentadbir Sekolah';
-
-            document.getElementById('photo-grid').innerHTML = '';
-            photoList = [];
-            if (data.photos && data.photos.length > 0) {
-                data.photos.forEach(p => {
-                    addPhotoCard(p.imageBase64, p.caption);
-                });
-            }
+        function saveDraft() {
+            const data = getFormDataPayload();
+            data.status = 'DRAF';
+            saveReportToStorage(data);
+            alert('Draf laporan berjaya disimpan secara tempatan!');
         }
 
-        function resetCurrentForm() {
-            document.getElementById('input-program').value = '';
-            document.getElementById('input-disediakan-nama').value = '';
-            document.getElementById('input-disemak-nama').value = '';
-            
-            initDefaultDutyList();
-            initDefaultAbsentList();
-            renderDutyFormRows();
-            renderAbsentFormRows();
-            populateEvaluationSelects();
-            
-            document.getElementById('ucapan-container').innerHTML = '';
-            ucapanList = [];
-            addUcapanCard();
-
-            document.getElementById('photo-grid').innerHTML = '';
-            photoList = [];
-
-            localStorage.removeItem('ssmp_report_draft');
-            showToast('Borang diset semula');
+        function submitFinalReport() {
+            const data = getFormDataPayload();
+            data.status = 'DIHANTAR';
+            saveReportToStorage(data);
+            alert('Laporan rasmi berjaya dihantar!');
+            switchTab('rekod');
         }
 
-        function exportDataJSON() {
-            const reports = getStoredReports();
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(reports, null, 2));
-            const dlAnchorElem = document.createElement('a');
-            dlAnchorElem.setAttribute("href", dataStr);
-            dlAnchorElem.setAttribute("download", `SSMP_Laporan_Bertugas_Backup_${new Date().toISOString().split('T')[0]}.json`);
-            dlAnchorElem.click();
+        function saveReportToStorage(data) {
+            let reports = JSON.parse(localStorage.getItem('ssmp_reports_2026') || '[]');
+            reports = reports.filter(r => r.id !== data.id);
+            reports.unshift(data);
+            localStorage.setItem('ssmp_reports_2026', JSON.stringify(reports));
         }
 
-        function importDataJSON(event) {
-            const fileReader = new FileReader();
-            fileReader.onload = function (e) {
-                try {
-                    const parsed = JSON.parse(e.target.result);
-                    if (Array.isArray(parsed)) {
-                        localStorage.setItem('ssmp_reports_archive', JSON.stringify(parsed));
-                        loadReportsFromStorage();
-                        showToast('Data berjaya diimport');
-                    } else {
-                        showToast('Format JSON tidak sah');
+        function loadReportsFromStorage() {
+            const tbody = document.getElementById('archiveTableBody');
+            tbody.innerHTML = '';
+            const reports = JSON.parse(localStorage.getItem('ssmp_reports_2026') || '[]');
+
+            if(reports.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center p-4 text-slate-500 italic">Tiada rekod laporan tersimpan.</td></tr>`;
+                return;
+            }
+
+            reports.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition border-b border-slate-200";
+                
+                let badgeClass = "badge-pending";
+                if(r.status === 'DISAHKAN') badgeClass = "badge-approved";
+                if(r.status === 'PERLU REVISI') badgeClass = "badge-revision";
+
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-slate-800">${formatDateStr(r.tarikhLaporan)} (${r.hariLaporan})</td>
+                    <td class="p-3">${formatDateStr(r.mulaMinggu)} - ${formatDateStr(r.tamatMinggu)}</td>
+                    <td class="p-3">${r.disediakanOleh || '-'}</td>
+                    <td class="p-3 text-center">
+                        <span class="px-2.5 py-1 text-xs font-bold rounded-full ${badgeClass}">${r.status}</span>
+                    </td>
+                    <td class="p-3 text-center space-x-2">
+                        <button onclick="viewReportFromArchive(${r.id})" class="px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded">Buka</button>
+                        <button onclick="deleteReportFromArchive(${r.id})" class="px-2.5 py-1 bg-red-600 hover:bg-red-700 text-white font-bold rounded">Padam</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function viewReportFromArchive(id) {
+            const reports = JSON.parse(localStorage.getItem('ssmp_reports_2026') || '[]');
+            const r = reports.find(item => item.id === id);
+            if(!r) return;
+
+            // Repopulate Form
+            document.getElementById('mulaMinggu').value = r.mulaMinggu;
+            document.getElementById('tamatMinggu').value = r.tamatMinggu;
+            document.getElementById('tarikhLaporan').value = r.tarikhLaporan;
+            document.getElementById('hariLaporan').value = r.hariLaporan;
+            document.getElementById('programAktiviti').value = r.programAktiviti;
+            document.getElementById('disediakanOleh').value = r.disediakanOleh;
+            document.getElementById('disemakOleh').value = r.disemakOleh;
+
+            // Duty rows
+            const dutyContainer = document.getElementById('dutyRowsContainer');
+            dutyContainer.innerHTML = '';
+            dutySignaturesData = {};
+            r.dutyList.forEach((item, idx) => {
+                addDutyRow(item.name, item.sig);
+            });
+
+            // Absent rows
+            const absentContainer = document.getElementById('absentRowsContainer');
+            absentContainer.innerHTML = '';
+            r.absentList.forEach(item => {
+                addAbsentRow(item.name, item.reason);
+            });
+
+            // Speech
+            const speechContainer = document.getElementById('speechContainer');
+            speechContainer.innerHTML = '';
+            r.speechList.forEach(item => {
+                addSpeechRow(item.speaker, item.text);
+            });
+
+            // Eval
+            if(r.evalList) {
+                const evalRows = document.querySelectorAll('#evalTableBody tr');
+                r.evalList.forEach((e, idx) => {
+                    if(evalRows[idx]) {
+                        evalRows[idx].querySelector('.eval-kebersihan').value = e.kebersihan;
+                        evalRows[idx].querySelector('.eval-keceriaan').value = e.keceriaan;
+                        evalRows[idx].querySelector('.eval-keselamatan').value = e.keselamatan;
                     }
-                } catch(err) {
-                    showToast('Gagal membaca fail JSON');
-                }
-            };
-            fileReader.readAsText(event.target.files[0]);
+                });
+            }
+
+            // Photos
+            uploadedImages = r.photos || [];
+            renderPhotoPreviews();
+
+            switchTab('pratonton');
         }
 
-        function renderDirectory() {
-            const guruListEl = document.getElementById('list-dir-guru');
-            const jurulatihListEl = document.getElementById('list-dir-jurulatih');
-            const badgeGuru = document.getElementById('badge-guru-count');
-            const badgeJurulatih = document.getElementById('badge-jurulatih-count');
-
-            if (badgeGuru) badgeGuru.innerText = GURU_LIST.length;
-            if (badgeJurulatih) badgeJurulatih.innerText = JURULATIH_LIST.length;
-
-            if (!guruListEl || !jurulatihListEl) return;
-
-            guruListEl.innerHTML = '';
-            jurulatihListEl.innerHTML = '';
-
-            GURU_LIST.forEach((name, idx) => {
-                const li = document.createElement('li');
-                li.className = "py-1 px-2 hover:bg-zinc-50 flex items-center justify-between text-zinc-800 border-b border-zinc-100 last:border-none";
-                li.innerHTML = `<span><span class="text-zinc-400 w-6 inline-block">${idx+1}.</span> ${name}</span>`;
-                guruListEl.appendChild(li);
-            });
-
-            JURULATIH_LIST.forEach((name, idx) => {
-                const li = document.createElement('li');
-                li.className = "py-1 px-2 hover:bg-zinc-50 flex items-center justify-between text-zinc-800 border-b border-zinc-100 last:border-none";
-                li.innerHTML = `<span><span class="text-zinc-400 w-6 inline-block">${idx+1}.</span> ${name}</span>`;
-                jurulatihListEl.appendChild(li);
-            });
+        function deleteReportFromArchive(id) {
+            if(!confirm('Adakah anda pasti untuk memadam rekod ini?')) return;
+            let reports = JSON.parse(localStorage.getItem('ssmp_reports_2026') || '[]');
+            reports = reports.filter(r => r.id !== id);
+            localStorage.setItem('ssmp_reports_2026', JSON.stringify(reports));
+            loadReportsFromStorage();
         }
 
-        function filterDirectory() {
-            const q = document.getElementById('dir-search').value.toUpperCase();
+        function exportJSON() {
+            const reports = localStorage.getItem('ssmp_reports_2026') || '[]';
+            const blob = new Blob([reports], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `eLaporan_SSMP_2026_Backup_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+        }
+
+        function resetForm() {
+            if(!confirm('Adakah anda pasti untuk set semula keseluruhan borang?')) return;
+            location.reload();
+        }
+
+        // Admin Access Modal Logic
+        function openAdminModal() {
+            document.getElementById('adminModal').classList.remove('hidden');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.add('hidden');
+        }
+
+        function verifyAdminPin() {
+            const pin = document.getElementById('adminPinInput').value;
+            if(pin === '1234') {
+                document.getElementById('adminAuthBox').classList.add('hidden');
+                document.getElementById('adminControlBox').classList.remove('hidden');
+            } else {
+                alert('PIN Pentadbir tidak sah!');
+            }
+        }
+
+        function applyAdminApproval() {
+            const adminName = document.getElementById('adminNameInput').value;
+            const status = document.getElementById('adminStatusSelect').value;
+
+            document.getElementById('disemakOleh').value = adminName;
+            document.getElementById('pvDisemakNama').innerText = adminName;
             
-            const guruItems = document.querySelectorAll('#list-dir-guru li');
-            guruItems.forEach(li => {
-                li.style.display = li.innerText.toUpperCase().includes(q) ? '' : 'none';
-            });
+            if(status === 'DISAHKAN') {
+                document.getElementById('pvAdminStamp').classList.remove('hidden');
+            } else {
+                document.getElementById('pvAdminStamp').classList.add('hidden');
+            }
 
-            const jurulatihItems = document.querySelectorAll('#list-dir-jurulatih li');
-            jurulatihItems.forEach(li => {
-                li.style.display = li.innerText.toUpperCase().includes(q) ? '' : 'none';
-            });
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-msg').innerText = msg;
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
-            setTimeout(() => {
-                toast.classList.remove('translate-y-0', 'opacity-100');
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 2500);
+            alert('Pengesahan Pentadbir berjaya diterapkan!');
+            closeAdminModal();
         }
     </script>
 </body>
