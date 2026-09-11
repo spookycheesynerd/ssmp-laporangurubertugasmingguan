@@ -6,7 +6,1109 @@
     <title>Sistem Laporan Guru Bertugas Harian / Mingguan</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Ic<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Laporan Guru Bertugas Harian / Mingguan</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; }
+            .page-break-inside-avoid { page-break-inside: avoid; break-inside: avoid; }
+            .page-break-before { page-break-before: always !important; break-before: page !important; }
+            .shadow-sm, .shadow-md, .shadow-lg { box-shadow: none !important; }
+            .border { border-color: #000 !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 no-print">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold text-sm">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-slate-900 text-base leading-tight">Laporan Guru Bertugas</h1>
+                    <p class="text-xs text-slate-500">Format Harian & Mingguan Sekolah</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <button onclick="loadPresetData()" class="text-xs px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-100 font-medium text-slate-700 transition">
+                    <i class="fa-solid fa-wand-magic-sparkles mr-1 text-slate-500"></i> Isi Contoh Data
+                </button>
+                <button onclick="resetForm()" class="text-xs px-3 py-1.5 rounded-lg border border-rose-200 text-rose-600 hover:bg-rose-50 font-medium transition">
+                    <i class="fa-solid fa-rotate-left mr-1"></i> Kosongkan
+                </button>
+                <button onclick="window.print()" class="text-xs px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-medium shadow-sm transition">
+                    <i class="fa-solid fa-print mr-1"></i> Cetak / Simpan PDF
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl w-full mx-auto px-4 py-6 flex-1 flex flex-col md:flex-row gap-6">
+
+        <!-- Sidebar Navigation -->
+        <aside class="w-full md:w-64 flex-shrink-0 no-print space-y-4">
+            <div class="bg-white border border-slate-200 rounded-xl p-2 space-y-1 shadow-sm">
+                <button id="nav-tab-maklumat" onclick="switchTab('tab-maklumat')" class="tab-btn w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold flex items-center gap-2.5 transition bg-slate-900 text-white">
+                    <i class="fa-solid fa-school w-4 text-center"></i>
+                    <span>Maklumat Sek. & Guru</span>
+                </button>
+                <button id="nav-tab-harian" onclick="switchTab('tab-harian')" class="tab-btn w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold flex items-center gap-2.5 transition text-slate-600 hover:bg-slate-100">
+                    <i class="fa-solid fa-calendar-day w-4 text-center"></i>
+                    <span>Catatan Laporan Harian</span>
+                </button>
+                <button id="nav-tab-gambar" onclick="switchTab('tab-gambar')" class="tab-btn w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold flex items-center gap-2.5 transition text-slate-600 hover:bg-slate-100">
+                    <i class="fa-solid fa-image w-4 text-center"></i>
+                    <span>Gambar Laporan</span>
+                </button>
+                <button id="nav-tab-preview" onclick="switchTab('tab-preview')" class="tab-btn w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold flex items-center gap-2.5 transition text-slate-600 hover:bg-slate-100">
+                    <i class="fa-solid fa-file-lines w-4 text-center"></i>
+                    <span>Paparan Dokumen Rasmi</span>
+                </button>
+            </div>
+
+            <!-- Auto-save notification -->
+            <div class="bg-white border border-slate-200 rounded-xl p-3 text-xs text-slate-500 flex items-center justify-between shadow-sm">
+                <span class="flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    Status Simpanan
+                </span>
+                <span id="save-status" class="font-medium text-slate-700">Tersimpan</span>
+            </div>
+        </aside>
+
+        <section class="flex-1 min-w-0">
+
+            <!-- SECTION 1: Maklumat Sekolah & Senarai Guru -->
+            <div id="section-maklumat" class="tab-content bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-6 no-print">
+                <div class="border-b border-slate-100 pb-3">
+                    <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide">1. Maklumat Am Laporan</h2>
+                    <p class="text-xs text-slate-500">Sila isi maklumat asas sekolah, minggu dan tempoh bertugas.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div class="col-span-1 md:col-span-2 space-y-1">
+                        <label class="font-semibold text-slate-700">Nama Sekolah</label>
+                        <input type="text" id="nama-sekolah" onchange="saveData()" value="SEKOLAH SUKAN MALAYSIA PAHANG" class="w-full p-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-slate-900 focus:outline-none font-semibold">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="font-semibold text-slate-700">Minggu Bertugas</label>
+                        <input type="text" id="minggu-bertugas" onchange="saveData()" placeholder="Contoh: MINGGU 12" class="w-full p-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-slate-900 focus:outline-none">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="font-semibold text-slate-700">Tarikh Mula (Isnin)</label>
+                        <input type="date" id="tarikh-mula" onchange="updateDates()" class="w-full p-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-slate-900 focus:outline-none">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="font-semibold text-slate-700">Tarikh Akhir (Jumaat)</label>
+                        <input type="date" id="tarikh-akhir" disabled class="w-full p-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-500">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="font-semibold text-slate-700">Disediakan Oleh (Guru / Jurulatih Pelapor)</label>
+                        <input type="text" id="disediakan-oleh" list="list-guru-jurulatih" onchange="saveData()" placeholder="Cari / Pilih Nama Guru atau Jurulatih" class="w-full p-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-slate-900 focus:outline-none">
+                    </div>
+                    <div class="col-span-1 md:col-span-2 space-y-1.5">
+                        <label class="font-semibold text-slate-700 block">Disemak Oleh (Pentadbir)</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <div>
+                                <select id="jawatan-pentadbir" onchange="saveData()" class="w-full p-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-slate-900 focus:outline-none text-xs bg-white">
+                                    <option value="Pengetua / Guru Besar">Pengetua / Guru Besar</option>
+                                    <option value="PK Pentadbiran">PK Pentadbiran</option>
+                                    <option value="PK Hal Ehwal Murid (HEM)">PK Hal Ehwal Murid (HEM)</option>
+                                    <option value="PK Kokurikulum">PK Kokurikulum</option>
+                                    <option value="PK Petang">PK Petang</option>
+                                    <option value="PK Tingkatan 6">PK Tingkatan 6</option>
+                                    <option value="Lain-lain Pentadbir">Lain-lain Pentadbir</option>
+                                </select>
+                            </div>
+                            <div class="sm:col-span-2">
+                                <input type="text" id="disemak-oleh" list="list-guru-jurulatih" onchange="saveData()" placeholder="Cari / Pilih Nama Pentadbir" class="w-full p-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-slate-900 focus:outline-none text-xs">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guru / Jurulatih Bertugas Table -->
+                <div class="pt-2 space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                        <h3 class="text-xs font-bold text-slate-900 uppercase">2. Senarai Guru / Jurulatih Bertugas</h3>
+                        <button onclick="addDutyTeacher()" class="text-xs text-slate-700 hover:text-black font-semibold flex items-center gap-1">
+                            <i class="fa-solid fa-plus text-[10px]"></i> Tambah Guru / Jurulatih
+                        </button>
+                    </div>
+                    <div id="duty-teachers-container" class="space-y-2"></div>
+                </div>
+
+                <!-- Guru Tidak Hadir Table -->
+                <div class="pt-2 space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                        <h3 class="text-xs font-bold text-slate-900 uppercase">3. Keberadaan Guru / Jurulatih (Tidak Hadir)</h3>
+                        <button onclick="addAbsentTeacher()" class="text-xs text-slate-700 hover:text-black font-semibold flex items-center gap-1">
+                            <i class="fa-solid fa-plus text-[10px]"></i> Tambah Rekod
+                        </button>
+                    </div>
+                    <div id="absent-teachers-container" class="space-y-2"></div>
+                </div>
+            </div>
+
+            <div id="section-harian" class="tab-content bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-5 no-print hidden">
+                <div class="border-b border-slate-100 pb-3 flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide">Catatan Harian Guru Bertugas</h2>
+                        <p class="text-xs text-slate-500">Pilih hari untuk mengemas kini perhimpunan, kebersihan, dan aktiviti.</p>
+                    </div>
+                    <button onclick="printSingleDay(currentSelectedDayIdx)" class="text-xs px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-medium shadow-sm transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-print"></i> Cetak Laporan Harian Ini
+                    </button>
+                </div>
+
+                <!-- Day Selector Tabs -->
+                <div id="day-selector" class="flex flex-wrap gap-1.5 p-1 bg-slate-100 rounded-lg"></div>
+
+                <!-- Active Day Form Body -->
+                <div id="daily-form-container" class="space-y-4 pt-2"></div>
+            </div>
+
+            <div id="section-gambar" class="tab-content bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-5 no-print hidden">
+                <div class="border-b border-slate-100 pb-3 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide">Laporan Bergambar</h2>
+                        <p class="text-xs text-slate-500">Muat naik gambar aktiviti, perhimpunan, atau kebersihan sekolah.</p>
+                    </div>
+                    <label class="cursor-pointer bg-slate-900 hover:bg-slate-800 text-white text-xs px-3 py-1.5 rounded-lg font-medium shadow-sm transition inline-flex items-center gap-1.5">
+                        <i class="fa-solid fa-upload"></i> Muat Naik Gambar
+                        <input type="file" accept="image/*" multiple onchange="handlePhotoUpload(event)" class="hidden">
+                    </label>
+                </div>
+
+                <div id="photo-empty-state" class="text-center py-12 border-2 border-dashed border-slate-200 rounded-xl space-y-2">
+                    <i class="fa-regular fa-images text-3xl text-slate-300"></i>
+                    <p class="text-xs font-medium text-slate-500">Belum ada gambar dimasukkan</p>
+                    <p class="text-[11px] text-slate-400">Klik butang "Muat Naik Gambar" untuk menambah lampiran.</p>
+                </div>
+
+                <div id="photo-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+            </div>
+
+            <div id="section-preview" class="tab-content hidden">
+
+                <!-- Mode & Day Switcher for Printing (Hidden in Print) -->
+                <div class="no-print bg-slate-100 border border-slate-200 rounded-xl p-3 mb-4 flex flex-wrap items-center justify-between gap-3 text-xs">
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-slate-700"><i class="fa-solid fa-sliders mr-1"></i> Mod Laporan:</span>
+                        <div class="inline-flex rounded-lg border border-slate-300 bg-white p-0.5">
+                            <button id="btn-mode-harian" onclick="setPreviewMode('harian')" class="px-3 py-1 rounded-md text-xs font-semibold bg-slate-900 text-white transition">
+                                Laporan Harian (1 Hari)
+                            </button>
+                            <button id="btn-mode-mingguan" onclick="setPreviewMode('mingguan')" class="px-3 py-1 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 transition">
+                                Laporan Mingguan (Semua Hari)
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="day-picker-container" class="flex items-center gap-2">
+                        <label class="font-semibold text-slate-700">Pilih Hari:</label>
+                        <select id="preview-day-select" onchange="changePreviewDay(this.value)" class="p-1.5 border border-slate-300 rounded-lg bg-white text-xs font-medium focus:ring-1 focus:ring-slate-900 focus:outline-none">
+                            <option value="0">Isnin</option>
+                            <option value="1">Selasa</option>
+                            <option value="2">Rabu</option>
+                            <option value="3">Khamis</option>
+                            <option value="4">Jumaat</option>
+                        </select>
+                    </div>
+
+                    <button onclick="window.print()" class="px-3 py-1.5 rounded-lg bg-slate-900 text-white hover:bg-slate-800 font-medium transition flex items-center gap-1.5 ml-auto">
+                        <i class="fa-solid fa-print"></i> Cetak / Simpan PDF
+                    </button>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 shadow-sm space-y-6 text-slate-900">
+                    
+                    <!-- Document Header -->
+                    <div class="text-center border-b border-black pb-4 space-y-1">
+                        <h2 id="prev-nama-sekolah" class="font-bold text-base sm:text-lg uppercase tracking-wider">SEKOLAH SUKAN MALAYSIA PAHANG</h2>
+                        <h1 id="prev-tajuk-laporan" class="font-bold text-sm sm:text-base tracking-wide">LAPORAN GURU BERTUGAS HARIAN</h1>
+                        <p class="text-xs font-semibold" id="prev-tarikh-hari-header">TARIKH: - | HARI: -</p>
+                    </div>
+
+                    <!-- Duty Teachers & Absent Teachers Tables -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <!-- Table 1: Duty Teachers -->
+                        <div class="space-y-1">
+                            <h3 class="font-bold text-[11px] uppercase border-b border-black pb-1">GURU / JURULATIH BERTUGAS</h3>
+                            <table class="w-full border-collapse border border-black text-left">
+                                <thead class="bg-slate-100 font-bold text-[11px]">
+                                    <tr>
+                                        <th class="border border-black p-1 w-8 text-center">BIL.</th>
+                                        <th class="border border-black p-1">NAMA</th>
+                                        <th class="border border-black p-1 w-24 text-center">TANDATANGAN</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="prev-duty-teachers-body"></tbody>
+                            </table>
+                        </div>
+
+                        <!-- Table 2: Absent Teachers -->
+                        <div class="space-y-1">
+                            <h3 class="font-bold text-[11px] uppercase border-b border-black pb-1">KEBERADAAN GURU / JURULATIH (TIDAK HADIR)</h3>
+                            <table class="w-full border-collapse border border-black text-left">
+                                <thead class="bg-slate-100 font-bold text-[11px]">
+                                    <tr>
+                                        <th class="border border-black p-1 w-8 text-center">BIL.</th>
+                                        <th class="border border-black p-1">NAMA</th>
+                                        <th class="border border-black p-1">CATATAN</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="prev-absent-teachers-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Daily Logs Section -->
+                    <div class="space-y-4 pt-2">
+                        <h3 id="prev-section-title" class="font-bold text-xs uppercase border-b border-black pb-1">CATATAN HARIAN GURU BERTUGAS</h3>
+                        <div id="prev-daily-reports-container" class="space-y-4"></div>
+                    </div>
+
+                    <!-- Photos Section in Document -->
+                    <div class="space-y-2 pt-2 page-break-inside-avoid">
+                        <h3 class="font-bold text-xs uppercase border-b border-black pb-1">LAPORAN BERGAMBAR</h3>
+                        <div id="prev-photo-grid" class="grid grid-cols-2 gap-3 pt-1"></div>
+                    </div>
+
+                    <!-- Signatures Block -->
+                    <div class="pt-8 grid grid-cols-2 gap-8 text-xs page-break-inside-avoid">
+                        <div class="space-y-12">
+                            <p class="font-semibold">DISEDIAKAN OLEH :</p>
+                            <div>
+                                <p class="font-bold text-slate-900" id="prev-disediakan-nama">( NAMA GURU / JURULATIH PELAPOR )</p>
+                                <p class="text-slate-600 text-[11px]">Guru / Jurulatih Bertugas Harian</p>
+                            </div>
+                        </div>
+                        <div class="space-y-12">
+                            <p class="font-semibold">DISEMAK OLEH :</p>
+                            <div>
+                                <p class="font-bold text-slate-900" id="prev-disemak-nama">( NAMA PENTADBIR )</p>
+                                <p class="text-slate-600 text-[11px]" id="prev-disemak-jawatan">Pengetua / Guru Besar / PK</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Global Auto-complete Datalist for Guru and Jurulatih -->
+    <datalist id="list-guru-jurulatih"></datalist>
+
+    <script>
+        // Official Teacher and Coach Name Records
+        const LIST_CIKGU = [
+            "ZAIDY BIN MOHD YUNUS", "ROSHALIZA BINTI MOHAMED", "RAFIDI BIN ABD. JABAR",
+            "MOHD SAIFUL BAKTIA BIN IBRAHIM", "SITI SHAHIDA BINTI ABDULLAH", "Dr. MAZMA SYAHIDATUL AYUNI BT MAZLAN",
+            "MOHD SYAFIQ LUQMAN BIN SHAMSUDDIN", "MOHD AZWAN BIN MISLIM", "MOHD NAWAWI BIN ZAKARIA",
+            "FONG YEN MIN", "NAZRI BIN MOHAMED", "MOHD SHAHRIL BIN ABDUL MALEK",
+            "NORAZURA AKMA BINTI SENIN", "NURZILA BINTI ASUR", "MOHAMAD SAIFUDDIN BIN SAID",
+            "NUR AFIQAH BINTI MOHD ASHRI", "MOHAMAD HAZEEMAN BIN ZULLKIFLI", "AHMAD BAIHAQI BIN MOHD ROZI",
+            "RABBIHAH BINTI YAKOB", "SITI ESYAH BINTI BAHARI", "NOORSHAFINAH BINTI AHMAD",
+            "SITI ZARLINA BINTI KARIM", "RASIDAH BINTI ASRU @ ASRON", "SAMINI A/P ANMPALAGAN",
+            "HADANIAH BINTI RAZALI", "MUHAMMAD AIZUDDIN BIN ABDUL WAHAB", "MUHAMAD SAFWAN BIN MAT SAKRI",
+            "NURUL HIDAYAH BINTI MUZAKARIA", "ANWAR BIN ISMAIL", "BETHURAJEVENV A/P PETHRAJOO",
+            "NOR AZLINDA BINTI ABDULLAH", "NURULHANA BINTI ZAKARIA", "SITI ROHAYA BINTI YAHYA",
+            "SITINURNABILAHUDA BINTI MOHD HAYAT", "ZULHILMI QUSYAIRI BIN AZMAN", "MUHAMAD NUR FIRDAUS BIN MOHD ASRI",
+            "MUHAMMAD AMIRUL SYAFIQ BIN ABDUL HAMID", "NOOR ADILAH BINTI AZHAR", "NOR ATIKA BINTI ABDUL MANAN",
+            "SITI MARYAM BINTI TAN", "NORZULIANA BINTI ABD. HAMID", "FATIN ILIA BINTI AHMAT",
+            "NIK MUHAMMAD AFIQ IQUAN BIN HASHIM", "SYASYA IZZATEY BINTI ABD SAMAD", "MUHAMMAD FIRDAUS BIN MOHAMA NIZAN",
+            "NUR ATHIRAH SYAMIMI BINTI BAHARUDDIN", "NURUL HAFIZAH BINTI ABDUL AZIZ", "ZULKIFLI BIN ALIAS",
+            "ZATIL FARYANI BINTI MUHAMMAD ZAID", "FARHANA BINTI MOHAMAD RADZI", "ADIRA FAZLIN BINTI MOHD ARIF",
+            "NOOR ALYA SYAHIRA BINTI ABDUL HALIM", "AHMAD SHAZWAN NAJMI BIN MOHD ASRI", "NURFATIN BINTI SUGIONO",
+            "MOHD KHAIRI BIN HAJI YACOB", "MUHASHAHRUL SHAZMIE BIN MOHAMED", "MUHAMMAD NOR FARIHIN BIN NOR HAKIMI"
+        ];
+
+        const LIST_JURULATIH = [
+            "SASITHARAN A/L MUNIANDI", "KENNY THAM YEW CHING", "NASIR BIN IDRIS",
+            "MOHD NASRUL HAKIM BIN HAJI MOHAMAD ZAHIR", "MOHD FAUZI BIN SULAIMAN", "NG SIANG FEY",
+            "MOHD ZERRY BIN NAZERI", "ABDUL HAKIM BIN YUNUS", "MUHAMAD ZAWAWI BIN MAJID",
+            "Dr. JENNE LEE LING HUEY", "NURMAHLIANA ZAIRANI BT MUHAMAD ZAINI", "MOHD FIRDAUS BIN ISA",
+            "TOO YING ING", "MUHAMMAD DZAFRAN ASYRAAF BIN MUHAMAD ZAINUDIN", "FAZLI HISHAM BIN FAUZI",
+            "MOHAMAD NAZEER BIN BIN MOHAMED NESHARAH", "MUHAMMAD SYAFIQ FATHUDDIN BIN AMRAN", "MUHAMAD AMIRUL NAIM BIN ABDUL GHANI",
+            "MOHD SHAIFULLIZAM BIN ABDULLAH", "SITI AISYAH BINTI NORA RAHIS", "NUR HARITHAH HAFIFAH BINTI HATIP",
+            "SITI NUR FARA'SHAFIRA BINTI SALSABRI", "NUR SYAHIRA BINTI MOHD"
+        ];
+
+        const PROGRAM_CATEGORIES = [
+            'Latihan Sukan / Kejurulatihan',
+            'Aktiviti Kokurikulum / Kelab',
+            'Program Akademik / Pengajaran',
+            'Kejohanan / Pertandingan Luar',
+            'Program Sahsiah / Kerohanian',
+            'Gotong-Royong / Kebersihan',
+            'Mesyuarat / Taklimat Guru',
+            'Hal-hal Lain'
+        ];
+
+        const DEFAULT_DAYS = ['Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat'];
+
+        let reportData = {
+            namaSekolah: 'SEKOLAH SUKAN MALAYSIA PAHANG',
+            mingguBertugas: '',
+            tarikhMula: '',
+            tarikhAkhir: '',
+            disediakanOleh: '',
+            disemakOleh: '',
+            jawatanPentadbir: 'Pengetua / Guru Besar',
+            dutyTeachers: [
+                { name: '', role: '' },
+                { name: '', role: '' },
+                { name: '', role: '' }
+            ],
+            absentTeachers: [],
+            dailyLogs: DEFAULT_DAYS.map((day) => ({
+                dayName: day,
+                date: '',
+                teacherInCharge: '',
+                perhimpunan: '',
+                cleanliness: {
+                    kawasan: { kebersihan: '', keceriaan: '' },
+                    bangunan: { kebersihan: '', keceriaan: '' },
+                    tandas: { kebersihan: '', keceriaan: '' },
+                    kantin: { kebersihan: '', keceriaan: '' }
+                },
+                programs: [
+                    { category: 'Latihan Sukan / Kejurulatihan', details: '' }
+                ]
+            })),
+            photos: []
+        };
+
+        let currentSelectedDayIdx = 0;
+        let previewMode = 'harian'; // 'harian' or 'mingguan'
+        let selectedPreviewDayIdx = 0;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initDatalists();
+            loadLocalData();
+        });
+
+        function initDatalists() {
+            const datalist = document.getElementById('list-guru-jurulatih');
+            if (!datalist) return;
+            datalist.innerHTML = '';
+
+            LIST_CIKGU.forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name;
+                opt.label = "Guru";
+                datalist.appendChild(opt);
+            });
+
+            LIST_JURULATIH.forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name;
+                opt.label = "Jurulatih";
+                datalist.appendChild(opt);
+            });
+        }
+
+        // Date Calculation Function
+        function calculateDatesFromMula() {
+            if (!reportData.tarikhMula) return;
+            const startDate = new Date(reportData.tarikhMula);
+            if (isNaN(startDate.getTime())) return;
+
+            // Calculate Friday date (+4 days)
+            const endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + 4);
+            reportData.tarikhAkhir = endDate.toISOString().split('T')[0];
+
+            const akhInput = document.getElementById('tarikh-akhir');
+            if (akhInput) akhInput.value = reportData.tarikhAkhir;
+
+            // Format DD/MM/YYYY for each weekday log
+            reportData.dailyLogs.forEach((log, idx) => {
+                const dayDate = new Date(startDate);
+                dayDate.setDate(startDate.getDate() + idx);
+                const dd = String(dayDate.getDate()).padStart(2, '0');
+                const mm = String(dayDate.getMonth() + 1).padStart(2, '0');
+                const yyyy = dayDate.getFullYear();
+                log.date = `${dd}/${mm}/${yyyy}`;
+            });
+        }
+
+        function updateDates() {
+            const mulaInput = document.getElementById('tarikh-mula');
+            if (!mulaInput || !mulaInput.value) return;
+            reportData.tarikhMula = mulaInput.value;
+            calculateDatesFromMula();
+            saveData();
+            renderDaySelector();
+            renderDailyForm();
+            updatePreviewDaySelectOptions();
+            updatePreview();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-slate-900', 'text-white');
+                btn.classList.add('text-slate-600', 'hover:bg-slate-100');
+            });
+
+            const targetSection = document.getElementById(`section-${tabId.replace('tab-', '')}`);
+            const targetNav = document.getElementById(`nav-${tabId}`);
+
+            if (targetSection) targetSection.classList.remove('hidden');
+            if (targetNav) {
+                targetNav.classList.remove('text-slate-600', 'hover:bg-slate-100');
+                targetNav.classList.add('bg-slate-900', 'text-white');
+            }
+
+            if (tabId === 'tab-preview') {
+                updatePreviewDaySelectOptions();
+                updatePreview();
+            }
+        }
+
+        function setPreviewMode(mode) {
+            previewMode = mode;
+            const btnHarian = document.getElementById('btn-mode-harian');
+            const btnMingguan = document.getElementById('btn-mode-mingguan');
+            const pickerContainer = document.getElementById('day-picker-container');
+
+            if (mode === 'harian') {
+                if (btnHarian) btnHarian.className = "px-3 py-1 rounded-md text-xs font-semibold bg-slate-900 text-white transition";
+                if (btnMingguan) btnMingguan.className = "px-3 py-1 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 transition";
+                if (pickerContainer) pickerContainer.style.display = 'flex';
+            } else {
+                if (btnMingguan) btnMingguan.className = "px-3 py-1 rounded-md text-xs font-semibold bg-slate-900 text-white transition";
+                if (btnHarian) btnHarian.className = "px-3 py-1 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 transition";
+                if (pickerContainer) pickerContainer.style.display = 'none';
+            }
+            updatePreview();
+        }
+
+        function changePreviewDay(idx) {
+            selectedPreviewDayIdx = parseInt(idx, 10);
+            updatePreview();
+        }
+
+        function updatePreviewDaySelectOptions() {
+            const selectEl = document.getElementById('preview-day-select');
+            if (!selectEl) return;
+
+            selectEl.innerHTML = '';
+            reportData.dailyLogs.forEach((log, idx) => {
+                const opt = document.createElement('option');
+                opt.value = idx;
+                opt.innerText = `${log.dayName.toUpperCase()} (${log.date || 'Tarikh Belum Set'})`;
+                if (idx === selectedPreviewDayIdx) opt.selected = true;
+                selectEl.appendChild(opt);
+            });
+        }
+
+        function printSingleDay(dayIdx) {
+            selectedPreviewDayIdx = dayIdx;
+            setPreviewMode('harian');
+            switchTab('tab-preview');
+            setTimeout(() => {
+                window.print();
+            }, 300);
+        }
+
+        function addDutyTeacher() {
+            reportData.dutyTeachers.push({ name: '', role: '' });
+            saveData();
+            renderDutyTeachers();
+        }
+
+        function removeDutyTeacher(idx) {
+            reportData.dutyTeachers.splice(idx, 1);
+            saveData();
+            renderDutyTeachers();
+        }
+
+        function renderDutyTeachers() {
+            const container = document.getElementById('duty-teachers-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            reportData.dutyTeachers.forEach((t, i) => {
+                container.innerHTML += `
+                    <div class="flex items-center gap-2">
+                        <span class="w-5 text-center text-xs font-bold text-slate-400">${i + 1}.</span>
+                        <input type="text" list="list-guru-jurulatih" value="${t.name || ''}" onchange="reportData.dutyTeachers[${i}].name = this.value; saveData();" placeholder="Nama Guru / Jurulatih" class="flex-1 p-2 border border-slate-300 rounded-lg text-xs focus:ring-1 focus:ring-slate-900 focus:outline-none">
+                        <input type="text" value="${t.role || ''}" onchange="reportData.dutyTeachers[${i}].role = this.value; saveData();" placeholder="Peranan / Catatan" class="w-1/3 p-2 border border-slate-300 rounded-lg text-xs focus:ring-1 focus:ring-slate-900 focus:outline-none">
+                        <button onclick="removeDutyTeacher(${i})" class="text-slate-400 hover:text-rose-600 p-1.5"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                    </div>
+                `;
+            });
+        }
+
+        function addAbsentTeacher() {
+            reportData.absentTeachers.push({ name: '', reason: '' });
+            saveData();
+            renderAbsentTeachers();
+        }
+
+        function removeAbsentTeacher(idx) {
+            reportData.absentTeachers.splice(idx, 1);
+            saveData();
+            renderAbsentTeachers();
+        }
+
+        function renderAbsentTeachers() {
+            const container = document.getElementById('absent-teachers-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (reportData.absentTeachers.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 italic py-1">Tiada rekod guru/jurulatih tidak hadir.</p>`;
+                return;
+            }
+
+            reportData.absentTeachers.forEach((t, i) => {
+                container.innerHTML += `
+                    <div class="flex items-center gap-2">
+                        <span class="w-5 text-center text-xs font-bold text-slate-400">${i + 1}.</span>
+                        <input type="text" list="list-guru-jurulatih" value="${t.name || ''}" onchange="reportData.absentTeachers[${i}].name = this.value; saveData();" placeholder="Nama Guru / Jurulatih" class="flex-1 p-2 border border-slate-300 rounded-lg text-xs focus:ring-1 focus:ring-slate-900 focus:outline-none">
+                        <input type="text" value="${t.reason || ''}" onchange="reportData.absentTeachers[${i}].reason = this.value; saveData();" placeholder="Sebab / Catatan (Contoh: CRK, Kursus, Sakit)" class="w-1/3 p-2 border border-slate-300 rounded-lg text-xs focus:ring-1 focus:ring-slate-900 focus:outline-none">
+                        <button onclick="removeAbsentTeacher(${i})" class="text-slate-400 hover:text-rose-600 p-1.5"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                    </div>
+                `;
+            });
+        }
+
+        function renderDaySelector() {
+            const container = document.getElementById('day-selector');
+            if (!container) return;
+            container.innerHTML = '';
+
+            reportData.dailyLogs.forEach((log, idx) => {
+                const isActive = idx === currentSelectedDayIdx;
+                const activeClass = isActive ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-200/60';
+                container.innerHTML += `
+                    <button onclick="selectDay(${idx})" class="px-3 py-1.5 rounded-md text-xs font-semibold transition ${activeClass}">
+                        ${log.dayName} ${log.date ? '(' + log.date + ')' : ''}
+                    </button>
+                `;
+            });
+        }
+
+        function selectDay(idx) {
+            currentSelectedDayIdx = idx;
+            renderDaySelector();
+            renderDailyForm();
+        }
+
+        function renderDailyForm() {
+            const container = document.getElementById('daily-form-container');
+            if (!container) return;
+
+            const log = reportData.dailyLogs[currentSelectedDayIdx];
+            if (!log) return;
+
+            const kawasan = log.cleanliness?.kawasan || {};
+            const bangunan = log.cleanliness?.bangunan || {};
+            const tandas = log.cleanliness?.tandas || {};
+            const kantin = log.cleanliness?.kantin || {};
+
+            let programsHTML = '';
+            if (!log.programs) log.programs = [];
+
+            log.programs.forEach((prog, pIdx) => {
+                let categoryOptions = PROGRAM_CATEGORIES.map(cat => 
+                    `<option value="${cat}" ${prog.category === cat ? 'selected' : ''}>${cat}</option>`
+                ).join('');
+
+                programsHTML += `
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                        <div class="w-full sm:w-1/3">
+                            <select onchange="updateProgramCategory(${currentSelectedDayIdx}, ${pIdx}, this.value)" class="w-full p-2 border border-slate-300 rounded-lg text-xs bg-white focus:ring-1 focus:ring-slate-900 focus:outline-none font-medium">
+                                ${categoryOptions}
+                            </select>
+                        </div>
+                        <div class="w-full sm:w-2/3 flex items-center gap-2">
+                            <input type="text" value="${prog.details || ''}" onchange="updateProgramDetails(${currentSelectedDayIdx}, ${pIdx}, this.value)" placeholder="Keterangan aktiviti..." class="flex-1 p-2 border border-slate-300 rounded-lg text-xs bg-white focus:ring-1 focus:ring-slate-900 focus:outline-none">
+                            <button onclick="removeProgramRow(${currentSelectedDayIdx}, ${pIdx})" class="text-slate-400 hover:text-rose-600 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="bg-slate-50 border border-slate-200 p-3 rounded-lg flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-slate-900 text-white font-bold text-xs px-2.5 py-1 rounded-md uppercase">${log.dayName}</span>
+                        <span class="text-xs font-semibold text-slate-700">${log.date || 'Tarikh Belum Diset'}</span>
+                    </div>
+                </div>
+
+                <!-- Perhimpunan -->
+                <div class="space-y-1.5">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <label class="font-bold text-slate-800 text-xs uppercase block">PERHIMPUNAN / UCAPAN / TAKLIMAT / PENGUMUMAN</label>
+                        <select onchange="applyPerhimpunanPreset(${currentSelectedDayIdx}, this.value)" class="p-1.5 border border-slate-300 rounded-lg text-xs bg-white text-slate-700 font-medium focus:ring-1 focus:ring-slate-900 focus:outline-none cursor-pointer">
+                            <option value="">-- Pilih Dropdown Template --</option>
+                            <option value="Perhimpunan Rasmi Mingguan berjalan lancar dengan ucapan pentadbir dan pengumuman aktiviti minggu ini.">Perhimpunan Rasmi Mingguan</option>
+                            <option value="Perhimpunan Pagi Ringkas: Nyanyian lagu rasmi, bacaan doa dan pesanan ringkas guru bertugas.">Perhimpunan Pagi Ringkas</option>
+                            <option value="Taklimat Disiplin & Kebersihan disampaikan oleh Guru Bertugas kepada semua pelajar.">Taklimat Disiplin & Kebersihan</option>
+                            <option value="Tiada perhimpunan dijalankan kerana faktor cuaca (hujan/cuaca buruk). Catatan dibuat di dalam kelas.">Tiada Perhimpunan (Hujan)</option>
+                            <option value="Tiada perhimpunan rasmi dijalankan bersempena Peperiksaan / Program Khas Sekolah.">Tiada Perhimpunan (Peperiksaan/Program)</option>
+                            <option value="Majlis Penyampaian Hadiah / Anugerah Kejohanan Sukan dijalankan semasa perhimpunan.">Majlis / Penyampaian Hadiah</option>
+                        </select>
+                    </div>
+                    <textarea onchange="reportData.dailyLogs[${currentSelectedDayIdx}].perhimpunan = this.value; saveData();" rows="3" placeholder="Catat perkara penting semasa perhimpunan rasmi/harian atau taklimat..." class="w-full p-2.5 border border-slate-300 rounded-lg text-xs focus:ring-1 focus:ring-slate-900 focus:outline-none">${log.perhimpunan || ''}</textarea>
+                </div>
+
+                <!-- Penilaian Kebersihan -->
+                <div class="space-y-2">
+                    <label class="font-bold text-slate-800 text-xs uppercase block">PENILAIAN KEBERSIHAN, KECERIAAN & KESELAMATAN KAWASAN</label>
+                    <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                        <table class="w-full text-xs text-left border-collapse">
+                            <thead class="bg-slate-100 font-bold text-slate-700 border-b border-slate-200">
+                                <tr>
+                                    <th class="p-2 border-r border-slate-200">KAWASAN / BANGUNAN</th>
+                                    <th class="p-2 border-r border-slate-200 w-1/3">KEBERSIHAN</th>
+                                    <th class="p-2 w-1/3">KECERIAAN & KESELAMATAN</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200">
+                                <tr>
+                                    <td class="p-2 font-medium bg-slate-50 border-r border-slate-200">Kawasan Sekolah</td>
+                                    <td class="p-1 border-r border-slate-200"><input type="text" value="${kawasan.kebersihan || ''}" onchange="updateCleanliness(${currentSelectedDayIdx}, 'kawasan', 'kebersihan', this.value)" placeholder="Contoh: Bersih" class="w-full p-1.5 border border-slate-200 rounded text-xs"></td>
+                                    <td class="p-1"><input type="text" value="${kawasan.keceriaan || ''}" onchange="updateCleanliness(${currentSelectedDayIdx}, 'kawasan', 'keceriaan', this.value)" placeholder="Contoh: Selamat" class="w-full p-1.5 border border-slate-200 rounded text-xs"></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-medium bg-slate-50 border-r border-slate-200">Bangunan / Kelas / Bengkel</td>
+                                    <td class="p-1 border-r border-slate-200"><input type="text" value="${bangunan.kebersihan || ''}" onchange="updateCleanliness(${currentSelectedDayIdx}, 'bangunan', 'kebersihan', this.value)" placeholder="Contoh: Kemas" class="w-full p-1.5 border border-slate-200 rounded text-xs"></td>
+                                    <td class="p-1"><input type="text" value="${bangunan.keceriaan || ''}" onchange="updateCleanliness(${currentSelectedDayIdx}, 'bangunan', 'keceriaan', this.value)" placeholder="Contoh: Terkawal" class="w-full p-1.5 border border-slate-200 rounded text-xs"></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-medium bg-slate-50 border-r border-slate-200">Tandas L dan P</td>
+                                    <td class="p-1 border-r border-slate-200"><input type="text" value="${tandas.kebersihan || ''}" onchange="updateCleanliness(${currentSelectedDayIdx}, 'tandas', 'kebersihan', this.value)" placeholder="Contoh: Memuaskan" class="w-full p-1.5 border border-slate-200 rounded text-xs"></td>
+                                    <td class="p-1"><input type="text" value="${tandas.keceriaan || ''}" onchange="updateCleanliness(${currentSelectedDayIdx}, 'tandas', 'keceriaan', this.value)" placeholder="Contoh: Berfungsi" class="w-full p-1.5 border border-slate-200 rounded text-xs"></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-medium bg-slate-50 border-r border-slate-200">Kantin Sekolah</td>
+                                    <td class="p-1 border-r border-slate-200"><input type="text" value="${kantin.kebersihan || ''}" onchange="updateCleanliness(${currentSelectedDayIdx}, 'kantin', 'kebersihan', this.value)" placeholder="Contoh: Bersih" class="w-full p-1.5 border border-slate-200 rounded text-xs"></td>
+                                    <td class="p-1"><input type="text" value="${kantin.keceriaan || ''}" onchange="updateCleanliness(${currentSelectedDayIdx}, 'kantin', 'keceriaan', this.value)" placeholder="Contoh: Ceria" class="w-full p-1.5 border border-slate-200 rounded text-xs"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Program / Aktiviti / Hal-Hal Lain -->
+                <div class="space-y-2 pt-1">
+                    <div class="flex items-center justify-between">
+                        <label class="font-bold text-slate-800 text-xs uppercase">PROGRAM / AKTIVITI / HAL-HAL LAIN</label>
+                        <button onclick="addProgramRow(${currentSelectedDayIdx})" class="text-xs text-slate-800 hover:text-black font-semibold flex items-center gap-1">
+                            <i class="fa-solid fa-plus text-[10px]"></i> Tambah Program / Aktiviti
+                        </button>
+                    </div>
+                    <div class="space-y-2">
+                        ${programsHTML}
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateCleanliness(dayIdx, section, prop, value) {
+            if (!reportData.dailyLogs[dayIdx].cleanliness) {
+                reportData.dailyLogs[dayIdx].cleanliness = { kawasan: {}, bangunan: {}, tandas: {}, kantin: {} };
+            }
+            if (!reportData.dailyLogs[dayIdx].cleanliness[section]) {
+                reportData.dailyLogs[dayIdx].cleanliness[section] = {};
+            }
+            reportData.dailyLogs[dayIdx].cleanliness[section][prop] = value;
+            saveData();
+        }
+
+        function applyPerhimpunanPreset(dayIdx, val) {
+            if (!val) return;
+            const currentVal = reportData.dailyLogs[dayIdx].perhimpunan || '';
+            if (currentVal.trim().length > 0) {
+                reportData.dailyLogs[dayIdx].perhimpunan = currentVal + '\n' + val;
+            } else {
+                reportData.dailyLogs[dayIdx].perhimpunan = val;
+            }
+            saveData();
+            renderDailyForm();
+        }
+
+        function addProgramRow(dayIdx) {
+            if (!reportData.dailyLogs[dayIdx].programs) {
+                reportData.dailyLogs[dayIdx].programs = [];
+            }
+            reportData.dailyLogs[dayIdx].programs.push({
+                category: 'Latihan Sukan / Kejurulatihan',
+                details: ''
+            });
+            saveData();
+            renderDailyForm();
+        }
+
+        function removeProgramRow(dayIdx, pIdx) {
+            reportData.dailyLogs[dayIdx].programs.splice(pIdx, 1);
+            saveData();
+            renderDailyForm();
+        }
+
+        function updateProgramCategory(dayIdx, pIdx, value) {
+            reportData.dailyLogs[dayIdx].programs[pIdx].category = value;
+            saveData();
+        }
+
+        function updateProgramDetails(dayIdx, pIdx, value) {
+            reportData.dailyLogs[dayIdx].programs[pIdx].details = value;
+            saveData();
+        }
+
+        function handlePhotoUpload(e) {
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
+
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    reportData.photos.push({
+                        url: evt.target.result,
+                        caption: file.name.replace(/\.[^/.]+$/, ""),
+                        day: reportData.dailyLogs[currentSelectedDayIdx]?.dayName || 'Isnin'
+                    });
+                    saveData();
+                    renderPhotos();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function removePhoto(idx) {
+            reportData.photos.splice(idx, 1);
+            saveData();
+            renderPhotos();
+        }
+
+        function updatePhotoCaption(idx, value) {
+            reportData.photos[idx].caption = value;
+            saveData();
+        }
+
+        function renderPhotos() {
+            const emptyState = document.getElementById('photo-empty-state');
+            const photoGrid = document.getElementById('photo-grid');
+            if (!emptyState || !photoGrid) return;
+
+            if (reportData.photos.length === 0) {
+                emptyState.classList.remove('hidden');
+                photoGrid.classList.add('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            photoGrid.classList.remove('hidden');
+            photoGrid.innerHTML = '';
+
+            reportData.photos.forEach((p, i) => {
+                photoGrid.innerHTML += `
+                    <div class="border border-slate-200 rounded-xl p-3 bg-white space-y-2 relative shadow-sm">
+                        <button onclick="removePhoto(${i})" class="absolute top-2 right-2 bg-rose-600 text-white w-6 h-6 rounded-full text-xs flex items-center justify-center hover:bg-rose-700 transition">
+                            <i class="fa-solid fa-times"></i>
+                        </button>
+                        <img src="${p.url}" class="w-full h-40 object-cover rounded-lg bg-slate-100 border">
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-semibold text-slate-500 uppercase block">Keterangan Gambar</label>
+                            <input type="text" value="${p.caption || ''}" onchange="updatePhotoCaption(${i}, this.value)" placeholder="Taip keterangan..." class="w-full p-1.5 border border-slate-300 rounded text-xs focus:ring-1 focus:ring-slate-900 focus:outline-none">
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function updatePreview() {
+            const setTxt = (id, txt) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = txt;
+            };
+
+            setTxt('prev-nama-sekolah', reportData.namaSekolah || 'SEKOLAH SUKAN MALAYSIA PAHANG');
+
+            const startDateStr = reportData.tarikhMula ? formatDateToMY(reportData.tarikhMula) : '...';
+            const endDateStr = reportData.tarikhAkhir ? formatDateToMY(reportData.tarikhAkhir) : '...';
+
+            if (previewMode === 'harian') {
+                const currentDayLog = reportData.dailyLogs[selectedPreviewDayIdx] || reportData.dailyLogs[0];
+                setTxt('prev-tajuk-laporan', 'LAPORAN GURU BERTUGAS HARIAN');
+                setTxt('prev-tarikh-hari-header', `TARIKH: ${currentDayLog.date || startDateStr}   |   HARI: ${currentDayLog.dayName.toUpperCase()}`);
+                setTxt('prev-section-title', `CATATAN LAPORAN HARIAN - ${currentDayLog.dayName.toUpperCase()}`);
+            } else {
+                setTxt('prev-tajuk-laporan', 'LAPORAN GURU BERTUGAS HARIAN / MINGGUAN');
+                setTxt('prev-tarikh-hari-header', `TEMPOH BERTUGAS: ${reportData.mingguBertugas || 'MINGGU'} (${startDateStr} - ${endDateStr})`);
+                setTxt('prev-section-title', 'CATATAN HARIAN GURU BERTUGAS (KESELURUHAN MINGGU)');
+            }
+
+            setTxt('prev-disediakan-nama', reportData.disediakanOleh ? `( ${reportData.disediakanOleh.toUpperCase()} )` : '( NAMA GURU / JURULATIH PELAPOR )');
+            setTxt('prev-disemak-nama', reportData.disemakOleh ? `( ${reportData.disemakOleh.toUpperCase()} )` : '( NAMA PENTADBIR )');
+            setTxt('prev-disemak-jawatan', reportData.jawatanPentadbir || 'Pengetua / Guru Besar / PK');
+
+            // Render Duty Teachers Table
+            const dutyBody = document.getElementById('prev-duty-teachers-body');
+            if (dutyBody) {
+                dutyBody.innerHTML = '';
+                reportData.dutyTeachers.forEach((t, i) => {
+                    dutyBody.innerHTML += `
+                        <tr>
+                            <td class="border border-black text-center p-1 font-medium">${i + 1}</td>
+                            <td class="border border-black p-1 font-medium">${t.name || '-'} <span class="font-normal italic text-[10px]">${t.role ? '(' + t.role + ')' : ''}</span></td>
+                            <td class="border border-black p-1"></td>
+                        </tr>
+                    `;
+                });
+            }
+
+            // Render Absent Teachers Table
+            const absentBody = document.getElementById('prev-absent-teachers-body');
+            if (absentBody) {
+                absentBody.innerHTML = '';
+                if (reportData.absentTeachers.length === 0) {
+                    absentBody.innerHTML = `<tr><td colspan="3" class="border border-black p-1 text-center italic text-slate-500">Tiada rekod guru/jurulatih tidak hadir</td></tr>`;
+                } else {
+                    reportData.absentTeachers.forEach((t, i) => {
+                        absentBody.innerHTML += `
+                            <tr>
+                                <td class="border border-black text-center p-1 font-medium">${i + 1}</td>
+                                <td class="border border-black p-1 font-medium">${t.name || '-'}</td>
+                                <td class="border border-black p-1">${t.reason || '-'}</td>
+                            </tr>
+                        `;
+                    });
+                }
+            }
+
+            // Render Daily Logs Section
+            const dailyContainer = document.getElementById('prev-daily-reports-container');
+            if (dailyContainer) {
+                dailyContainer.innerHTML = '';
+
+                const logsToRender = previewMode === 'harian' 
+                    ? [reportData.dailyLogs[selectedPreviewDayIdx] || reportData.dailyLogs[0]]
+                    : reportData.dailyLogs;
+
+                logsToRender.forEach((log, index) => {
+                    if (!log) return;
+                    const kawasan = log.cleanliness?.kawasan || {};
+                    const bangunan = log.cleanliness?.bangunan || {};
+                    const tandas = log.cleanliness?.tandas || {};
+                    const kantin = log.cleanliness?.kantin || {};
+
+                    let programText = '';
+                    if (log.programs && Array.isArray(log.programs) && log.programs.length > 0) {
+                        programText = log.programs.map(p => {
+                            if (!p.details && !p.category) return '';
+                            return `• <strong>${p.category || 'Aktiviti'}:</strong> ${p.details || '-'}`;
+                        }).filter(Boolean).join('<br>');
+                    } else if (log.program) {
+                        programText = log.program;
+                    }
+                    if (!programText) programText = 'Tiada aktiviti khusus.';
+
+                    const pageBreakClass = (previewMode === 'mingguan' && index > 0) ? 'page-break-before' : '';
+
+                    dailyContainer.innerHTML += `
+                        <div class="border border-black text-xs page-break-inside-avoid ${pageBreakClass}">
+                            <table class="w-full border-collapse">
+                                <tbody>
+                                    <tr class="bg-slate-100 font-bold border-b border-black">
+                                        <td class="border-r border-black p-1.5 w-1/2">TARIKH: ${log.date || '-'}</td>
+                                        <td class="p-1.5 w-1/2">HARI: ${log.dayName.toUpperCase()}</td>
+                                    </tr>
+                                    <tr class="border-b border-black">
+                                        <td class="p-2 font-bold align-top border-r border-black bg-slate-50/50">PERHIMPUNAN / UCAPAN / TAKLIMAT:</td>
+                                        <td colspan="2" class="p-2 align-top whitespace-pre-line">${log.perhimpunan || 'Tiada catatan.'}</td>
+                                    </tr>
+                                    <tr class="border-b border-black bg-slate-100 font-bold">
+                                        <td class="p-1.5 border-r border-black">KAWASAN / BANGUNAN</td>
+                                        <td class="p-1.5 border-r border-black text-center w-1/3">KEBERSIHAN</td>
+                                        <td class="p-1.5 text-center w-1/3">KECERIAAN & KESELAMATAN</td>
+                                    </tr>
+                                    <tr class="border-b border-black">
+                                        <td class="p-1.5 border-r border-black font-semibold">Kawasan Sekolah</td>
+                                        <td class="p-1.5 border-r border-black text-center">${kawasan.kebersihan || '-'}</td>
+                                        <td class="p-1.5 text-center">${kawasan.keceriaan || '-'}</td>
+                                    </tr>
+                                    <tr class="border-b border-black">
+                                        <td class="p-1.5 border-r border-black font-semibold">Bangunan / Kelas / Bengkel</td>
+                                        <td class="p-1.5 border-r border-black text-center">${bangunan.kebersihan || '-'}</td>
+                                        <td class="p-1.5 text-center">${bangunan.keceriaan || '-'}</td>
+                                    </tr>
+                                    <tr class="border-b border-black">
+                                        <td class="p-1.5 border-r border-black font-semibold">Tandas L dan P</td>
+                                        <td class="p-1.5 border-r border-black text-center">${tandas.kebersihan || '-'}</td>
+                                        <td class="p-1.5 text-center">${tandas.keceriaan || '-'}</td>
+                                    </tr>
+                                    <tr class="border-b border-black">
+                                        <td class="p-1.5 border-r border-black font-semibold">Kantin Sekolah</td>
+                                        <td class="p-1.5 border-r border-black text-center">${kantin.kebersihan || '-'}</td>
+                                        <td class="p-1.5 text-center">${kantin.keceriaan || '-'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2 font-bold align-top border-r border-black bg-slate-50/50">PROGRAM / AKTIVITI / LAIN-LAIN:</td>
+                                        <td colspan="2" class="p-2 align-top text-xs">${programText}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                });
+            }
+
+            // Render Photos Preview
+            const photoPrevGrid = document.getElementById('prev-photo-grid');
+            if (photoPrevGrid) {
+                photoPrevGrid.innerHTML = '';
+                
+                let filteredPhotos = reportData.photos;
+                if (previewMode === 'harian') {
+                    const selectedDayName = reportData.dailyLogs[selectedPreviewDayIdx]?.dayName;
+                    filteredPhotos = reportData.photos.filter(p => !p.day || p.day === selectedDayName);
+                }
+
+                if (filteredPhotos.length === 0) {
+                    photoPrevGrid.innerHTML = `<p class="col-span-2 text-center text-xs italic text-slate-400 py-4 border border-dashed border-slate-300 rounded">Tiada laporan bergambar dilampirkan.</p>`;
+                } else {
+                    filteredPhotos.forEach(p => {
+                        photoPrevGrid.innerHTML += `
+                            <div class="border border-black p-2 rounded text-center space-y-1.5 bg-white">
+                                <img src="${p.url}" class="max-h-48 mx-auto object-contain rounded">
+                                <p class="text-xs font-medium leading-snug">${p.caption || 'Gambar Laporan'}</p>
+                            </div>
+                        `;
+                    });
+                }
+            }
+        }
+
+        function formatDateToMY(dateStr) {
+            if (!dateStr) return '';
+            const parts = dateStr.split('-');
+            if (parts.length === 3) {
+                return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+            return dateStr;
+        }
+
+        function saveData() {
+            const getVal = (id) => document.getElementById(id)?.value || '';
+            reportData.namaSekolah = getVal('nama-sekolah') || 'SEKOLAH SUKAN MALAYSIA PAHANG';
+            reportData.mingguBertugas = getVal('minggu-bertugas');
+            reportData.disediakanOleh = getVal('disediakan-oleh');
+            reportData.disemakOleh = getVal('disemak-oleh');
+            reportData.jawatanPentadbir = getVal('jawatan-pentadbir');
+
+            localStorage.setItem('guru_bertugas_report', JSON.stringify(reportData));
+
+            const statusEl = document.getElementById('save-status');
+            if (statusEl) {
+                statusEl.innerHTML = `<i class="fa-solid fa-check text-[10px] text-emerald-600"></i> Tersimpan`;
+            }
+        }
+
+        function loadLocalData() {
+            const saved = localStorage.getItem('guru_bertugas_report');
+            if (saved) {
+                try {
+                    reportData = JSON.parse(saved);
+                } catch(e) { console.error(e); }
+            }
+
+            // Always enforce default school name
+            reportData.namaSekolah = 'SEKOLAH SUKAN MALAYSIA PAHANG';
+
+            const setVal = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.value = val || '';
+            };
+
+            setVal('nama-sekolah', reportData.namaSekolah);
+            setVal('minggu-bertugas', reportData.mingguBertugas);
+            setVal('tarikh-mula', reportData.tarikhMula);
+            setVal('tarikh-akhir', reportData.tarikhAkhir);
+            setVal('disediakan-oleh', reportData.disediakanOleh);
+            setVal('disemak-oleh', reportData.disemakOleh);
+            setVal('jawatan-pentadbir', reportData.jawatanPentadbir);
+
+            calculateDatesFromMula();
+            renderDutyTeachers();
+            renderAbsentTeachers();
+            renderDaySelector();
+            renderDailyForm();
+            renderPhotos();
+            updatePreview();
+        }
+
+        function loadPresetData() {
+            reportData.namaSekolah = 'SEKOLAH SUKAN MALAYSIA PAHANG';
+            reportData.mingguBertugas = 'MINGGU 24';
+            reportData.tarikhMula = '2026-07-20';
+            reportData.disediakanOleh = LIST_CIKGU[0]; // ZAIDY BIN MOHD YUNUS
+            reportData.disemakOleh = 'DR. MAZMA SYAHIDATUL AYUNI BT MAZLAN';
+            reportData.jawatanPentadbir = 'Pengetua / Guru Besar';
+            
+            reportData.dutyTeachers = [
+                { name: LIST_CIKGU[0], role: 'Ketua Guru Bertugas' },
+                { name: LIST_CIKGU[1], role: 'AJK Kebersihan' },
+                { name: LIST_JURULATIH[0], role: 'Jurulatih Disiplin & Sukan' }
+            ];
+
+            reportData.absentTeachers = [
+                { name: LIST_CIKGU[3], reason: 'Kursus Kejurulatihan Kebangsaan' }
+            ];
+
+            reportData.dailyLogs = DEFAULT_DAYS.map((day, i) => ({
+                dayName: day,
+                date: `2${i}/07/2026`,
+                teacherInCharge: LIST_CIKGU[i % LIST_CIKGU.length],
+                perhimpunan: i === 0 ? 'Perhimpunan Rasmi Mingguan. Taklimat disiplin pelajar, ketepatan masa latihan dan kebersihan asrama.' : 'Taklimat ringkas pagi berjalan dengan lancar.',
+                cleanliness: {
+                    kawasan: { kebersihan: 'Sangat Baik', keceriaan: 'Selamat & Ceria' },
+                    bangunan: { kebersihan: 'Baik', keceriaan: 'Terkawal' },
+                    tandas: { kebersihan: 'Bersih', keceriaan: 'Berfungsi dengan baik' },
+                    kantin: { kebersihan: 'Sangat Memuaskan', keceriaan: 'Makanan tersusun' }
+                },
+                programs: [
+                    { category: 'Latihan Sukan / Kejurulatihan', details: i === 0 ? 'Latihan Pusat Sukan & Perjumpaan Rumah Sukan.' : 'Latihan rutin harian mengikut jadual.' },
+                    { category: 'Aktiviti Kokurikulum / Kelab', details: i === 2 ? 'Perjumpaan mingguan Unit Beruniform.' : '' }
+                ].filter(p => p.details)
+            }));
+
+            saveData();
+            loadLocalData();
+        }
+
+        function resetForm() {
+            localStorage.removeItem('guru_bertugas_report');
+            location.reload();
+        }
+    </script>
+</body>
+</html>ons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts Plus Jakarta Sans -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
